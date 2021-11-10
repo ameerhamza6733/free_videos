@@ -3,6 +3,7 @@
     <dimen name="value_0dp">0dp</dimen>
     <dimen name="value_1dp">1dp</dimen>
     <dimen name="value_4dp">4dp</dimen>
+    <dimen name="value_6dp">6dp</dimen>
     <dimen name="value_8dp">8dp</dimen>
     <dimen name="value_10dp">10dp</dimen>
     <dimen name="value_12dp">16dp</dimen>
@@ -18,7 +19,8 @@
     <dimen name="text_siz_18">18sp</dimen>
     <dimen name="text_siz_20">20sp</dimen>
     <dimen name="text_siz_22">22sp</dimen>
-    <dimen name="api_iv_150">200dp</dimen>
+    <dimen name="api_iv_150">250dp</dimen>
+    <dimen name="api_h_300">300dp</dimen>
     <dimen name="toolbar_size">55dp</dimen>
     <dimen name="menu_btn">35dp</dimen>
     <dimen name="value_70dp">70dp</dimen>

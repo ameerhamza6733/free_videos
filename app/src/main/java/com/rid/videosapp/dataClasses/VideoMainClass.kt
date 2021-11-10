@@ -1,3 +1,5 @@
 package com.rid.videosapp.dataClasses
 
-data class VideoMainClass(val id:Int,val url:String, val videos:ArrayList<DataFiles> )
+data class VideoMainClass(
+    val videos: ArrayList<DataFiles>
+)

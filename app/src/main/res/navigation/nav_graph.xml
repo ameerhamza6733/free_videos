@@ -9,5 +9,19 @@
         android:id="@+id/homeFragment"
         android:name="com.rid.videosapp.fragments.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_playVideo"
+            app:destination="@id/playVideo" />
+    </fragment>
+    <fragment
+        android:id="@+id/playVideo"
+        android:name="com.rid.videosapp.fragments.PlayVideo"
+        android:label="fragment_play_video"
+        tools:layout="@layout/fragment_play_video" >
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="default" />
+    </fragment>
 </navigation>

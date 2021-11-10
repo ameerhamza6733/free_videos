@@ -6,16 +6,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rid.videosapp.R
 import com.rid.videosapp.dataClasses.DataFiles
+import com.rid.videosapp.dataClasses.VideoDetail
+import com.rid.videosapp.fragments.HomeFragmentDirections
 
-class VideosAdapter(val context: Context, val vidList: ArrayList<DataFiles>) :
+class VideosAdapter(val context: Context, val vidList: ArrayList<VideoDetail>) :
     RecyclerView.Adapter<VideosAdapter.MyViewHolder>() {
     val TAG="VideosAdapter"
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imgView = itemView.findViewById<ImageView>(R.id.rec_view_img_view_id)
+        init {
+            itemView.setOnClickListener {
+                val action=HomeFragmentDirections.actionHomeFragmentToPlayVideo(vidList[adapterPosition].link)
+                it.findNavController().navigate(action)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -29,7 +38,7 @@ class VideosAdapter(val context: Context, val vidList: ArrayList<DataFiles>) :
         Log.d(TAG,"onBindCall")
         Log.d(TAG,"data size is ${vidList.size}")
         Glide.with(context)
-            .load(myList.image)
+            .load(myList.link)
             .into(holder.imgView)
     }
 

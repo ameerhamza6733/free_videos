@@ -10,10 +10,10 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.rid.videosapp.adapter.VideosAdapter
 import com.rid.videosapp.constants.Constants
-import com.rid.videosapp.dataClasses.DataFiles
+import com.rid.videosapp.dataClasses.VideoDetail
 import com.rid.videosapp.dataClasses.VideoMainClass
 import com.rid.videosapp.databinding.FragmentHomeBinding
 import com.rid.videosapp.utils.Utils
@@ -25,7 +25,7 @@ class HomeFragment : Fragment() {
     private lateinit var videosObserver: Observer<VideoMainClass>
     var queryToSearch = ""
     val TAG = "HomeFragment"
-    private lateinit var myList: ArrayList<DataFiles>
+    private lateinit var myList: ArrayList<VideoDetail>
     private lateinit var vidAdapter: VideosAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,20 +47,20 @@ class HomeFragment : Fragment() {
 
     private fun initialization() {
         myList = ArrayList()
-        val layoutmanager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        bindView.recViewMainId.layoutManager = layoutmanager
+        bindView.recViewMainId.layoutManager=GridLayoutManager(requireContext(),2,GridLayoutManager.VERTICAL,false)
 
         videosObserver = Observer {
             if (it != null) {
-                Log.d(TAG, "data is ${it.videos}")
-                passDataToVideoAdapter(it.videos)
+              //  Log.d(TAG, "data is ${it.videos}")
+                Log.d(TAG,"video files are  ${it.videos[0].video_files}")
+                passDataToVideoAdapter(it.videos[0].video_files)
             }
         }
 
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun passDataToVideoAdapter(list: ArrayList<DataFiles>) {
+    private fun passDataToVideoAdapter(list: ArrayList<VideoDetail>) {
         myList.addAll(list)
         Log.d(TAG, "my list size is ${myList.size}")
         vidAdapter = VideosAdapter(requireContext(), myList)
