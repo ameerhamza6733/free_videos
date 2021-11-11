@@ -10,10 +10,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rid.videosapp.R
-import com.rid.videosapp.dataClasses.DataFiles
-import com.rid.videosapp.dataClasses.VideoDetail
-import com.rid.videosapp.dataClasses.VideoMainClass
-import com.rid.videosapp.dataClasses.pixelVideo.response.VideoDetail
+import com.rid.videosapp.dataClasses.pixelVideo.response.DataFiles
 import com.rid.videosapp.fragments.HomeFragmentDirections
 
 class VideosAdapter(val context: Context, val vidList: ArrayList<DataFiles>) :

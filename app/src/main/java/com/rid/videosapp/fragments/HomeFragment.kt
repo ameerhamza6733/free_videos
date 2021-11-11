@@ -8,16 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.Observer
+
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.rid.videosapp.adapter.VideosAdapter
 import com.rid.videosapp.constants.Constants
-import com.rid.videosapp.dataClasses.pixelVideo.response.VideoDetail
-import com.rid.videosapp.dataClasses.pixelVideo.response.VideoMainClass
-import com.rid.videosapp.dataClasses.DataFiles
-import com.rid.videosapp.dataClasses.VideoDetail
-import com.rid.videosapp.dataClasses.VideoMainClass
+import com.rid.videosapp.dataClasses.pixelVideo.response.DataFiles
 import com.rid.videosapp.databinding.FragmentHomeBinding
 import com.rid.videosapp.utils.Utils
 import com.rid.videosapp.utils.toast
@@ -63,7 +59,7 @@ class HomeFragment : Fragment() {
                     }
                     is Resource.Success->{
 
-                        passDataToVideoAdapter(resource.response.videos[0].video_files)
+                        passDataToVideoAdapter(resource.response.videos)
                     }
                 }
             }

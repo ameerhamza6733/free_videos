@@ -3,6 +3,7 @@ package com.rid.videosapp.repostroy
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.rid.videosapp.dataClasses.Video
 import com.rid.videosapp.dataClasses.pixelVideo.response.VideoMainClass
 import com.rid.videosapp.network.VideoRequest
 import dev.sagar.lifescience.utils.Event
@@ -22,16 +23,12 @@ class PixelVideoRepo  {
 
            }else {
                val videoMainClass= response.body()
+
                Event(Resource.Success(videoMainClass!!,""))
            }
        }catch (e:Exception){
            e.printStackTrace()
            Event(Resource.Error(e,e.message.toString()))
        }
-
-
-
-
-
     }
 }
