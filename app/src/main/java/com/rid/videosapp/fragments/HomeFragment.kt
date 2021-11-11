@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.rid.videosapp.adapter.VideosAdapter
 import com.rid.videosapp.constants.Constants
+import com.rid.videosapp.dataClasses.DataFiles
 import com.rid.videosapp.dataClasses.VideoDetail
 import com.rid.videosapp.dataClasses.VideoMainClass
 import com.rid.videosapp.databinding.FragmentHomeBinding
@@ -25,7 +26,7 @@ class HomeFragment : Fragment() {
     private lateinit var videosObserver: Observer<VideoMainClass>
     var queryToSearch = ""
     val TAG = "HomeFragment"
-    private lateinit var myList: ArrayList<VideoDetail>
+    private lateinit var myList: ArrayList<DataFiles>
     private lateinit var vidAdapter: VideosAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +40,7 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
         bindView = FragmentHomeBinding.inflate(inflater, container, false)
         initialization()
-        callViewModel(Constants.POPULAR_SEARCHES, 1, 15)
+        callViewModel(Constants.POPULAR_SEARCHES, 1, 30)
         onClickListeners()
         return bindView.root
     }
@@ -52,15 +53,15 @@ class HomeFragment : Fragment() {
         videosObserver = Observer {
             if (it != null) {
               //  Log.d(TAG, "data is ${it.videos}")
-                Log.d(TAG,"video files are  ${it.videos[0].video_files}")
-                passDataToVideoAdapter(it.videos[0].video_files)
+                Log.d(TAG,"video files are  ${it.videos[0].video_files[0].link}")
+                passDataToVideoAdapter(it.videos)
             }
         }
 
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun passDataToVideoAdapter(list: ArrayList<VideoDetail>) {
+    private fun passDataToVideoAdapter(list: List<DataFiles>) {
         myList.addAll(list)
         Log.d(TAG, "my list size is ${myList.size}")
         vidAdapter = VideosAdapter(requireContext(), myList)
@@ -77,7 +78,7 @@ class HomeFragment : Fragment() {
                 if (query != null) {
                     queryToSearch = query
                     myList.clear()
-                    callViewModel(queryToSearch, 1, 15)
+                    callViewModel(queryToSearch, 1, 30)
                     vidAdapter.notifyDataSetChanged()
                 } else {
                     Utils.showToast(requireContext(), "enter query to search")
