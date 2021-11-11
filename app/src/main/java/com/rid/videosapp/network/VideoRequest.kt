@@ -1,9 +1,11 @@
 package com.rid.videosapp.network
 
-import com.rid.videosapp.dataClasses.VideoMainClass
+import com.rid.videosapp.dataClasses.pixelVideo.response.VideoMainClass
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
@@ -14,11 +16,12 @@ const val API_KEY = "563492ad6f91700001000001581b67f38770410b96516ba0cf1d598b"
 interface VideosInterface {
     @Headers("Authorization: $API_KEY")
     @GET("search")
-    fun getVidoes(
+   suspend fun getVidoes(
+
         @Query("query") query: String,
         @Query("page") page: Int,
         @Query("per_page") per_page: Int
-    ): Call<VideoMainClass>
+    ): Response<VideoMainClass>
 
 }
 

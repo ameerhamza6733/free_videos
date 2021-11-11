@@ -13,16 +13,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.rid.videosapp.adapter.VideosAdapter
 import com.rid.videosapp.constants.Constants
-import com.rid.videosapp.dataClasses.VideoDetail
-import com.rid.videosapp.dataClasses.VideoMainClass
+import com.rid.videosapp.dataClasses.pixelVideo.response.VideoDetail
+import com.rid.videosapp.dataClasses.pixelVideo.response.VideoMainClass
 import com.rid.videosapp.databinding.FragmentHomeBinding
 import com.rid.videosapp.utils.Utils
+import com.rid.videosapp.utils.toast
 import com.rid.videosapp.viewModel.MainViewModel
+import dev.sagar.lifescience.utils.Resource
 
 class HomeFragment : Fragment() {
     private lateinit var bindView: FragmentHomeBinding
     private lateinit var viewModel: MainViewModel
-    private lateinit var videosObserver: Observer<VideoMainClass>
+
     var queryToSearch = ""
     val TAG = "HomeFragment"
     private lateinit var myList: ArrayList<VideoDetail>
@@ -39,25 +41,40 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
         bindView = FragmentHomeBinding.inflate(inflater, container, false)
         initialization()
+        initObsers()
         callViewModel(Constants.POPULAR_SEARCHES, 1, 15)
         onClickListeners()
         return bindView.root
     }
 
 
+    private fun  initObsers(){
+        viewModel.pixelVideoSearchLiveData.observe(viewLifecycleOwner,{
+            it.peekContent().let { resource ->
+                when(resource){
+                    is Resource.Error->{
+                        toast("error ${resource.message}")
+                    }
+                    is Resource.Loading->{
+                        toast("loading")
+                    }
+                    is Resource.Success->{
+
+                        passDataToVideoAdapter(resource.response.videos[0].video_files)
+                    }
+                }
+            }
+        })
+    }
+
     private fun initialization() {
         myList = ArrayList()
         bindView.recViewMainId.layoutManager=GridLayoutManager(requireContext(),2,GridLayoutManager.VERTICAL,false)
 
-        videosObserver = Observer {
-            if (it != null) {
-              //  Log.d(TAG, "data is ${it.videos}")
-                Log.d(TAG,"video files are  ${it.videos[0].video_files}")
-                passDataToVideoAdapter(it.videos[0].video_files)
-            }
+
         }
 
-    }
+
 
     @SuppressLint("NotifyDataSetChanged")
     private fun passDataToVideoAdapter(list: ArrayList<VideoDetail>) {
@@ -96,7 +113,7 @@ class HomeFragment : Fragment() {
 
     private fun callViewModel(query: String, page: Int, per_page: Int) {
 
-        viewModel.getData(query, page, per_page)?.observe(viewLifecycleOwner, videosObserver)
+        viewModel.getPixelVideos(query, page, per_page)
 
     }
 }

@@ -1,3 +1,3 @@
-package com.rid.videosapp.dataClasses
+package com.rid.videosapp.dataClasses.pixelVideo.response
 
 data class VideoDetail(val quality:String,val file_type:String,val link:String)
