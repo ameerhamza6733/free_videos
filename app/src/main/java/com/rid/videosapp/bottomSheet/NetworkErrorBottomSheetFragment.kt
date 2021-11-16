@@ -12,7 +12,7 @@ import com.rid.videosapp.sharedViewModel.SharedViewModel
 
 
 class NetworkErrorBottomSheetFragment : BottomSheetDialogFragment(){
-    private val binding by viewBinding(NetworkErrorBottomSheetBinding::bind)
+  //  private val binding by viewBinding(NetworkErrorBottomSheetBinding::bind)
     private val sharedViewModel by activityViewModels<SharedViewModel> ()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,12 +25,12 @@ class NetworkErrorBottomSheetFragment : BottomSheetDialogFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply {
-            btRetry.setOnClickListener {
-                sharedViewModel.message.value=true
-                dismiss()
-            }
+//        binding.apply {
+//            btRetry.setOnClickListener {
+//                sharedViewModel.message.value=true
+//                dismiss()
+//            }
         }
     }
 
-}
+//}
