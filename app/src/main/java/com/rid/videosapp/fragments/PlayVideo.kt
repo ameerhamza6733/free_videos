@@ -57,11 +57,11 @@ class PlayVideo : Fragment() {
         videoPlayer= SimpleExoPlayer.Builder(requireContext()).build()
         videoPlayer.playWhenReady = true
         rootView.exoplayerViewId.player=videoPlayer
-//        preparePlayer(myUrl,".mp4")
+       preparePlayer(myUrl,".mp4")
 
-        val uri=Uri.parse(myUrl)
-        rootView.videoViewId.setVideoURI(uri)
-        rootView.videoViewId.start()
+//        val uri=Uri.parse(myUrl)
+//        rootView.videoViewId.setVideoURI(uri)
+//        rootView.videoViewId.start()
 
     }
     private fun buildMediaSource(uri: Uri, type: String): MediaSource {

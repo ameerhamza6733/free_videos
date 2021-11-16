@@ -3,5 +3,11 @@
     <style name="Circular">
         <item name="cornerSize">15%</item>
     </style>
-
+    <style name="ShapeAppearanceOverlay.Demo" parent="">
+        <item name="cornerSize">8dp</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
+    <style name="BottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/ShapeAppearanceOverlay.Demo</item>
+    </style>
 </resources>

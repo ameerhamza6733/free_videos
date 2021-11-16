@@ -11,10 +11,13 @@ import androidx.appcompat.widget.SearchView
 
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.rid.videosapp.R
 import com.rid.videosapp.adapter.VideosAdapter
 import com.rid.videosapp.constants.Constants
 import com.rid.videosapp.dataClasses.pixelVideo.response.DataFiles
 import com.rid.videosapp.databinding.FragmentHomeBinding
+
 import com.rid.videosapp.utils.Utils
 import com.rid.videosapp.utils.toast
 import com.rid.videosapp.viewModel.MainViewModel
@@ -55,11 +58,13 @@ class HomeFragment : Fragment() {
                         toast("error ${resource.message}")
                     }
                     is Resource.Loading->{
-                        toast("loading")
+                        bindView.pbBarId.visibility=View.VISIBLE
                     }
                     is Resource.Success->{
-
+                        bindView.pbBarId.visibility=View.INVISIBLE
+                        bindView.recViewMainId.visibility=View.VISIBLE
                         passDataToVideoAdapter(resource.response.videos)
+                        openBoottomSheet()
                     }
                 }
             }
@@ -70,11 +75,7 @@ class HomeFragment : Fragment() {
         myList = ArrayList()
         bindView.recViewMainId.layoutManager=GridLayoutManager(requireContext(),2,GridLayoutManager.VERTICAL,false)
 
-
         }
-
-
-
     @SuppressLint("NotifyDataSetChanged")
     private fun passDataToVideoAdapter(list: List<DataFiles>) {
         myList.addAll(list)
@@ -113,6 +114,15 @@ class HomeFragment : Fragment() {
     private fun callViewModel(query: String, page: Int, per_page: Int) {
 
         viewModel.getPixelVideos(query, page, per_page)
+    }
 
+    private fun openBoottomSheet(){
+        val bottomView =
+            LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet, null)
+
+        val bottomSheetDialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
+
+        bottomSheetDialog.setContentView(bottomView)
+        bottomSheetDialog.show()
     }
 }
