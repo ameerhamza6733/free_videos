@@ -27,7 +27,7 @@ class HomeFragment : Fragment() {
     private lateinit var viewModel: MainViewModel
     var queryToSearch = Constants.POPULAR_SEARCHES
     val TAG = "HomeFragment"
-    var page:Int=1
+    var page: Int = 1
     private lateinit var myList: ArrayList<Video>
     private lateinit var vidAdapter: VideosAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,22 +50,22 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun  initObsers(){
-        viewModel.pixelVideoSearchLiveData.observe(viewLifecycleOwner,{
+    private fun initObsers() {
+        viewModel.pixelVideoSearchLiveData.observe(viewLifecycleOwner, {
             it.peekContent().let { resource ->
-                when(resource){
-                    is Resource.Error->{
-                        if (resource.error?.isInternetError()==true){
+                when (resource) {
+                    is Resource.Error -> {
+                        if (resource.error?.isInternetError() == true) {
                             Utils.openBoottomSheet(requireContext())
                         }
                     }
-                    is Resource.Loading->{
-                        bindView.pbBarId.visibility=View.VISIBLE
+                    is Resource.Loading -> {
+                        bindView.pbBarId.visibility = View.VISIBLE
                     }
-                    is Resource.Success->{
-                        bindView.pbBarId.visibility=View.INVISIBLE
-                        bindView.recViewMainId.visibility=View.VISIBLE
-                        Log.d(TAG,"data is ${resource.response}")
+                    is Resource.Success -> {
+                        bindView.pbBarId.visibility = View.INVISIBLE
+                        bindView.recViewMainId.visibility = View.VISIBLE
+                        Log.d(TAG, "data is ${resource.response}")
                         passDataToVideoAdapter(resource.response)
                     }
                 }
@@ -75,14 +75,16 @@ class HomeFragment : Fragment() {
 
     private fun initialization() {
         myList = ArrayList()
-        bindView.recViewMainId.layoutManager=GridLayoutManager(requireContext(),2,GridLayoutManager.VERTICAL,false)
+        bindView.recViewMainId.layoutManager =
+            GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
 
-        }
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     private fun passDataToVideoAdapter(list: ArrayList<Video>) {
         myList.addAll(list)
         Log.d(TAG, "my list size is ${list.size}")
-        vidAdapter = VideosAdapter(requireContext(),myList)
+        vidAdapter = VideosAdapter(requireContext(), myList)
         bindView.recViewMainId.adapter = vidAdapter
         vidAdapter.notifyDataSetChanged()
     }
@@ -114,27 +116,27 @@ class HomeFragment : Fragment() {
         })
     }
 
-    private fun callViewModel(query: String, page:Int, per_page: Int) {
-        Log.d(TAG,"view modeld called")
+    private fun callViewModel(query: String, page: Int, per_page: Int) {
+        Log.d(TAG, "view modeld called")
         viewModel.getPixelVideos(query, page, per_page)
     }
 
-    private fun setPagination(){
+    private fun setPagination() {
         bindView.nestedScroolViewId.viewTreeObserver
             .addOnScrollChangedListener {
-                if (        bindView.nestedScroolViewId.getChildAt(0).getBottom()
-                    <=         bindView.nestedScroolViewId.getHeight() + bindView.nestedScroolViewId.getScrollY()
+                if (bindView.nestedScroolViewId.getChildAt(0).getBottom()
+                    <= bindView.nestedScroolViewId.getHeight() + bindView.nestedScroolViewId.getScrollY()
                 ) {
                     //scroll view is at bottom
-                 //   clearList()
-                  bindView.pbBarId.visibility=View.VISIBLE
-                    bindView.recViewMainId.visibility=View.INVISIBLE
-                    callViewModel(queryToSearch,++page,15)
+                    //   clearList()
+                    bindView.pbBarId.visibility = View.VISIBLE
+                    bindView.recViewMainId.visibility = View.INVISIBLE
+                    callViewModel(queryToSearch, ++page, 15)
 
                 } else {
                     //scroll view is not at bottom
-                    bindView.pbBarId.visibility=View.INVISIBLE
-                    bindView.recViewMainId.visibility=View.VISIBLE
+                    bindView.pbBarId.visibility = View.INVISIBLE
+                    bindView.recViewMainId.visibility = View.VISIBLE
                 }
             }
     }
