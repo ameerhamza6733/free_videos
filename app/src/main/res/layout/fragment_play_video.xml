@@ -8,11 +8,30 @@
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/exoplayerView_id"
-        android:layout_width="0dp"
+        android:layout_width="@dimen/value_0dp"
         android:layout_height="match_parent"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/share_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/ic_next_svgrepo_com"
+        app:layout_constraintBottom_toTopOf="@+id/download_id"
+        app:layout_constraintEnd_toEndOf="@+id/download_id" />
+
+    <ImageButton
+        android:id="@+id/download_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/value_16dp"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/ic_download_for_offline_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

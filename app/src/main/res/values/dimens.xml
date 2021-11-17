@@ -9,8 +9,9 @@
     <dimen name="value_12dp">16dp</dimen>
     <dimen name="value_14dp">14dp</dimen>
     <dimen name="value_16dp">16dp</dimen>
-    <dimen name="value_18dp">16dp</dimen>
-    <dimen name="value_22dp">16dp</dimen>
+    <dimen name="value_18dp">18dp</dimen>
+    <dimen name="value_22dp">22dp</dimen>
+    <dimen name="value_32dp">32dp</dimen>
     <dimen name="cv_corners">6dp</dimen>
     <dimen name="cv_elevation">4dp</dimen>
     <dimen name="text_siz_12">12sp</dimen>

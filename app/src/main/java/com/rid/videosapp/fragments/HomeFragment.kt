@@ -8,28 +8,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.widget.NestedScrollView
 
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.rid.videosapp.R
 import com.rid.videosapp.adapter.VideosAdapter
 import com.rid.videosapp.constants.Constants
-import com.rid.videosapp.dataClasses.pixelVideo.response.DataFiles
+import com.rid.videosapp.dataClasses.Video
 import com.rid.videosapp.databinding.FragmentHomeBinding
 
 import com.rid.videosapp.utils.Utils
-import com.rid.videosapp.utils.toast
+import com.rid.videosapp.utils.isInternetError
 import com.rid.videosapp.viewModel.MainViewModel
 import dev.sagar.lifescience.utils.Resource
 
 class HomeFragment : Fragment() {
     private lateinit var bindView: FragmentHomeBinding
     private lateinit var viewModel: MainViewModel
-
-    var queryToSearch = ""
+    var queryToSearch = Constants.POPULAR_SEARCHES
     val TAG = "HomeFragment"
-    private lateinit var myList: ArrayList<DataFiles>
+    var page:Int=1
+    private lateinit var myList: ArrayList<Video>
     private lateinit var vidAdapter: VideosAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +43,9 @@ class HomeFragment : Fragment() {
         bindView = FragmentHomeBinding.inflate(inflater, container, false)
         initialization()
         initObsers()
-        callViewModel(Constants.POPULAR_SEARCHES, 1, 15)
+        callViewModel(Constants.POPULAR_SEARCHES, page, 15)
         onClickListeners()
+        setPagination()
         return bindView.root
     }
 
@@ -55,7 +55,9 @@ class HomeFragment : Fragment() {
             it.peekContent().let { resource ->
                 when(resource){
                     is Resource.Error->{
-                        toast("error ${resource.message}")
+                        if (resource.error?.isInternetError()==true){
+                            Utils.openBoottomSheet(requireContext())
+                        }
                     }
                     is Resource.Loading->{
                         bindView.pbBarId.visibility=View.VISIBLE
@@ -63,8 +65,8 @@ class HomeFragment : Fragment() {
                     is Resource.Success->{
                         bindView.pbBarId.visibility=View.INVISIBLE
                         bindView.recViewMainId.visibility=View.VISIBLE
-                        passDataToVideoAdapter(resource.response.videos)
-                        openBoottomSheet()
+                        Log.d(TAG,"data is ${resource.response}")
+                        passDataToVideoAdapter(resource.response)
                     }
                 }
             }
@@ -77,10 +79,10 @@ class HomeFragment : Fragment() {
 
         }
     @SuppressLint("NotifyDataSetChanged")
-    private fun passDataToVideoAdapter(list: List<DataFiles>) {
+    private fun passDataToVideoAdapter(list: ArrayList<Video>) {
         myList.addAll(list)
-        Log.d(TAG, "my list size is ${myList.size}")
-        vidAdapter = VideosAdapter(requireContext(), myList)
+        Log.d(TAG, "my list size is ${list.size}")
+        vidAdapter = VideosAdapter(requireContext(),myList)
         bindView.recViewMainId.adapter = vidAdapter
         vidAdapter.notifyDataSetChanged()
     }
@@ -92,9 +94,10 @@ class HomeFragment : Fragment() {
             override fun onQueryTextSubmit(query: String?): Boolean {
 
                 if (query != null) {
-                    queryToSearch = query
                     myList.clear()
-                    callViewModel(queryToSearch, 1, 30)
+                    queryToSearch = query
+
+                    callViewModel(queryToSearch, page, 30)
                     vidAdapter.notifyDataSetChanged()
                 } else {
                     Utils.showToast(requireContext(), "enter query to search")
@@ -111,18 +114,30 @@ class HomeFragment : Fragment() {
         })
     }
 
-    private fun callViewModel(query: String, page: Int, per_page: Int) {
-
+    private fun callViewModel(query: String, page:Int, per_page: Int) {
+        Log.d(TAG,"view modeld called")
         viewModel.getPixelVideos(query, page, per_page)
     }
 
-    private fun openBoottomSheet(){
-        val bottomView =
-            LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet, null)
+    private fun setPagination(){
+        bindView.nestedScroolViewId.viewTreeObserver
+            .addOnScrollChangedListener {
+                if (        bindView.nestedScroolViewId.getChildAt(0).getBottom()
+                    <=         bindView.nestedScroolViewId.getHeight() + bindView.nestedScroolViewId.getScrollY()
+                ) {
+                    //scroll view is at bottom
+                 //   clearList()
+                  bindView.pbBarId.visibility=View.VISIBLE
+                    bindView.recViewMainId.visibility=View.INVISIBLE
+                    callViewModel(queryToSearch,++page,15)
 
-        val bottomSheetDialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
-
-        bottomSheetDialog.setContentView(bottomView)
-        bottomSheetDialog.show()
+                } else {
+                    //scroll view is not at bottom
+                    bindView.pbBarId.visibility=View.INVISIBLE
+                    bindView.recViewMainId.visibility=View.VISIBLE
+                }
+            }
     }
 }
+
+

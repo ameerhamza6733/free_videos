@@ -15,7 +15,12 @@ import retrofit2.Response
 
 class PixelVideoRepo {
     val api = VideoRequest.newInstance;
-    suspend fun getData(query: String, page: Int, per_page: Int): Event<Resource<VideoMainClass>> {
+    val videoGen = ArrayList<Video>()
+    suspend fun getData(
+        query: String,
+        page: Int,
+        per_page: Int
+    ): Event<Resource<ArrayList<Video>>> {
 
         return try {
             val response = api.getVidoes(query, page, per_page)
@@ -26,7 +31,18 @@ class PixelVideoRepo {
             } else {
                 val videoMainClass = response.body()
 
-                Event(Resource.Success(videoMainClass!!, ""))
+                for (i in videoMainClass?.videos!!.indices) {
+                    val abc = Video(
+                        "",
+                        videoMainClass.videos[i].image,
+                        videoMainClass.videos[i].video_files[0].link,
+                        videoMainClass.videos[i].duration
+                    )
+                    videoGen.add(abc)
+                }
+
+                Event(Resource.Success(videoGen, ""))
+
             }
         } catch (e: Exception) {
             e.printStackTrace()

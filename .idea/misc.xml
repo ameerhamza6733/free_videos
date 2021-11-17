@@ -3,8 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/PersonalWork/AndroidProjects/VideosApp/app/src/main/res/drawable/ic_baseline_ios_share_24.xml" value="0.175" />
         <entry key="..\:/PersonalWork/AndroidProjects/VideosApp/app/src/main/res/drawable/ic_baseline_not_interested_24.xml" value="0.16111111111111112" />
         <entry key="..\:/PersonalWork/AndroidProjects/VideosApp/app/src/main/res/drawable/ic_baseline_videocam_24.xml" value="0.2203125" />
+        <entry key="..\:/PersonalWork/AndroidProjects/VideosApp/app/src/main/res/drawable/ic_download_for_offline_24.xml" value="0.175" />
         <entry key="..\:/PersonalWork/AndroidProjects/VideosApp/app/src/main/res/drawable/shape.xml" value="0.9" />
         <entry key="..\:/PersonalWork/AndroidProjects/VideosApp/app/src/main/res/drawable/shape_bottom_down_btn.xml" value="0.16111111111111112" />
         <entry key="..\:/PersonalWork/AndroidProjects/VideosApp/app/src/main/res/drawable/shape_bottom_sheet.xml" value="0.16111111111111112" />
