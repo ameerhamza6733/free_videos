@@ -4,4 +4,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="dash">dash</string>
     <string name="exo">exoPlayer</string>
+    <string name="downloading">Downloading Start....</string>
+    <string name="vid">Video</string>
+    <string name="owner_name">Owner Name</string>
+    <string name="download">Download</string>
+    <string name="tag">Do you want yo download this video ?</string>
 </resources>

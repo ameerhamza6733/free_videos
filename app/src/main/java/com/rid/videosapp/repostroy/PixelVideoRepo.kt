@@ -16,6 +16,7 @@ import retrofit2.Response
 class PixelVideoRepo {
     val api = VideoRequest.newInstance;
     val videoGen = ArrayList<Video>()
+    val TAG="PixelVideoRepo"
     suspend fun getData(
         query: String,
         page: Int,
@@ -30,13 +31,13 @@ class PixelVideoRepo {
 
             } else {
                 val videoMainClass = response.body()
-
                 for (i in videoMainClass?.videos!!.indices) {
                     val abc = Video(
-                        "",
+                        videoMainClass.videos[i].user.name,
                         videoMainClass.videos[i].image,
                         videoMainClass.videos[i].video_files[0].link,
-                        videoMainClass.videos[i].duration
+                        videoMainClass.videos[i].duration,
+                        videoMainClass.videos[i].id
                     )
                     videoGen.add(abc)
                 }
@@ -45,8 +46,10 @@ class PixelVideoRepo {
 
             }
         } catch (e: Exception) {
+            Log.d(TAG,"erors is ${e.message}")
             e.printStackTrace()
             Event(Resource.Error(e, e.message.toString()))
+
         }
     }
 }

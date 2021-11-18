@@ -23,5 +23,17 @@
             android:name="url"
             app:argType="string"
             android:defaultValue="default" />
+        <argument
+            android:name="name"
+            app:argType="string"
+            android:defaultValue="default" />
+        <argument
+            android:name="duration"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 </navigation>

@@ -6,6 +6,11 @@ import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.rid.videosapp.R
+import androidx.core.content.ContextCompat.startActivity
+
+import android.content.Intent
+import androidx.core.content.ContextCompat
+
 
 class Utils {
     companion object {
@@ -22,5 +27,17 @@ class Utils {
             bottomSheetDialog.setContentView(bottomView)
             bottomSheetDialog.show()
         }
+         fun shareImg(context: Context,url:String) {
+            val intent = Intent()
+            intent.action = Intent.ACTION_SEND
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Android Studio Pro")
+            intent.putExtra(
+                Intent.EXTRA_TEXT,
+                url
+            )
+            intent.type = "text/plain"
+            context.startActivity(intent)
+        }
+
     }
 }

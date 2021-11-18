@@ -12,10 +12,13 @@ import androidx.core.widget.NestedScrollView
 
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.rid.videosapp.adapter.VideosAdapter
 import com.rid.videosapp.constants.Constants
 import com.rid.videosapp.dataClasses.Video
 import com.rid.videosapp.databinding.FragmentHomeBinding
+
 
 import com.rid.videosapp.utils.Utils
 import com.rid.videosapp.utils.isInternetError
@@ -75,9 +78,8 @@ class HomeFragment : Fragment() {
 
     private fun initialization() {
         myList = ArrayList()
-        bindView.recViewMainId.layoutManager =
-            GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
-
+        val staggeredGridLayoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        bindView.recViewMainId.layoutManager = staggeredGridLayoutManager
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -119,6 +121,7 @@ class HomeFragment : Fragment() {
     private fun callViewModel(query: String, page: Int, per_page: Int) {
         Log.d(TAG, "view modeld called")
         viewModel.getPixelVideos(query, page, per_page)
+
     }
 
     private fun setPagination() {

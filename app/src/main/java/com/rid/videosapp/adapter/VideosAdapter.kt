@@ -17,13 +17,19 @@ import dev.sagar.lifescience.utils.Resource
 class VideosAdapter(val context: Context, val vidList: ArrayList<Video>) :
     RecyclerView.Adapter<VideosAdapter.MyViewHolder>() {
     val TAG = "VideosAdapter"
+
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imgView = itemView.findViewById<ImageView>(R.id.rec_view_img_view_id)
 
         init {
             itemView.setOnClickListener {
                 val action =
-                    HomeFragmentDirections.actionHomeFragmentToPlayVideo(vidList[adapterPosition].videoUrl)
+                    HomeFragmentDirections.actionHomeFragmentToPlayVideo(
+                        vidList[adapterPosition].videoUrl,
+                        vidList[absoluteAdapterPosition].ownerName,
+                        vidList[absoluteAdapterPosition].vidDuration,
+                        vidList[absoluteAdapterPosition].id
+                    )
 
                 it.findNavController().navigate(action)
             }
@@ -40,7 +46,7 @@ class VideosAdapter(val context: Context, val vidList: ArrayList<Video>) :
         val myList = vidList[position]
         Log.d(TAG, "onBindCall")
         Log.d(TAG, "data size is ${vidList.size}")
-        Log.d(TAG,"user name is ${vidList[position].ownerName}")
+        Log.d(TAG, "user name is ${myList.ownerName}")
         Glide.with(context)
             .load(myList.videoImage)
             .into(holder.imgView)
