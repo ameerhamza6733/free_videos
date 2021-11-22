@@ -5,13 +5,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rid.videosapp.R
 import com.rid.videosapp.dataClasses.Video
+import com.rid.videosapp.fragments.HomeFragment
 import com.rid.videosapp.fragments.HomeFragmentDirections
+import com.rid.videosapp.utils.Utils
 import dev.sagar.lifescience.utils.Resource
 
 class VideosAdapter(val context: Context, val vidList: ArrayList<Video>) :
@@ -20,8 +24,17 @@ class VideosAdapter(val context: Context, val vidList: ArrayList<Video>) :
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imgView = itemView.findViewById<ImageView>(R.id.rec_view_img_view_id)
-
+        val morebtn=itemView.findViewById<Button>(R.id.btn_more)
         init {
+            morebtn.setOnClickListener {
+                try {
+
+                }catch (e:Exception){
+                    Log.d(TAG,"error calling vm ${e.message}")
+                }
+
+            }
+
             itemView.setOnClickListener {
                 val action =
                     HomeFragmentDirections.actionHomeFragmentToPlayVideo(
@@ -44,9 +57,6 @@ class VideosAdapter(val context: Context, val vidList: ArrayList<Video>) :
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val myList = vidList[position]
-        Log.d(TAG, "onBindCall")
-        Log.d(TAG, "data size is ${vidList.size}")
-        Log.d(TAG, "user name is ${myList.ownerName}")
         Glide.with(context)
             .load(myList.videoImage)
             .into(holder.imgView)

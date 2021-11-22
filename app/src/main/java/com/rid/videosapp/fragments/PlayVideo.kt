@@ -1,15 +1,18 @@
 package com.rid.videosapp.fragments
 
+import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Environment
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.MediaController
 import androidx.navigation.fragment.navArgs
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.MediaSource
@@ -28,19 +31,16 @@ import java.io.File
 import java.lang.Exception
 
 class PlayVideo : Fragment() {
-    private lateinit var dataSourceFactory: DataSource.Factory
-    private lateinit var videoPlayer: SimpleExoPlayer
     val args: PlayVideoArgs by navArgs()
     var myUrl = ""
     var ownerName = ""
     var duration = 0
     var vidId=0
+
     val TAG = "PlayVideo"
     private lateinit var rootView: FragmentPlayVideoBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dataSourceFactory =
-            DefaultDataSourceFactory(requireContext(), getString(R.string.exo))
     }
 
     override fun onCreateView(
@@ -61,19 +61,20 @@ class PlayVideo : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        stopMediaPlayer()
+      //  stopMediaPlayer()
+        rootView.exoplayerViewId.stopPlayback()
     }
 
     override fun onStop() {
         super.onStop()
-        stopMediaPlayer()
+      //  stopMediaPlayer()
+        rootView.exoplayerViewId.stopPlayback()
     }
 
     private fun initialization() {
-        videoPlayer = SimpleExoPlayer.Builder(requireContext()).build()
-        videoPlayer.playWhenReady = true
-        rootView.exoplayerViewId.player = videoPlayer
-        preparePlayer(myUrl, Constants.TYPE)
+        rootView.exoplayerViewId.setVideoURI(Uri.parse(myUrl))
+        rootView.exoplayerViewId.start()
+
         rootView.vidOwnerTagId.text = ownerName
         rootView.vidDurationId.text = duration.toString()
 
@@ -90,31 +91,17 @@ class PlayVideo : Fragment() {
               }
           })
         }
-    }
+        rootView.exoplayerViewId.setOnClickListener {
 
-    private fun buildMediaSource(uri: Uri, type: String): MediaSource {
-        return if (type == getString(R.string.dash)) {
-            DashMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(uri)
-        } else {
-            ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(uri)
+        }
+        rootView.exoplayerViewId.setOnPreparedListener {
+            it.isLooping=true
+            startCountDown()
+        }
+        rootView.exoplayerViewId.setOnCompletionListener {
+         startCountDown()
         }
     }
-
-    private fun preparePlayer(videoUrl: String, type: String) {
-        val uri = Uri.parse(videoUrl)
-        val mediaSource = buildMediaSource(uri, type)
-        videoPlayer.prepare(mediaSource)
-    }
-
-    private fun stopMediaPlayer() {
-        if (videoPlayer.isPlaying) {
-            videoPlayer.stop()
-            videoPlayer.release()
-        }
-    }
-
 
     private fun downloadVideo(url:String) {
         try {
@@ -139,6 +126,20 @@ class PlayVideo : Fragment() {
         } catch (e: Exception) {
             Log.d(TAG, "failed ${e.message}")
         }
+    }
 
+    fun startCountDown(){
+        object : CountDownTimer((duration*1000).toLong(), 1000) {
+
+            @SuppressLint("SetTextI18n")
+            override fun onTick(millisUntilFinished: Long) {
+                rootView.vidDurationId.setText(""+millisUntilFinished / 1000)
+            }
+
+            @SuppressLint("SetTextI18n")
+            override fun onFinish() {
+                startCountDown()
+            }
+        }.start()
     }
 }
