@@ -35,6 +35,7 @@ class HomeFragment : Fragment() {
     val TAG = "HomeFragment"
     var page: Int = 1
 
+
     private lateinit var myList: ArrayList<Video>
     private lateinit var vidAdapter: VideosAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +53,7 @@ class HomeFragment : Fragment() {
         callingAndObservingViewModel()
         callViewModel(Constants.POPULAR_SEARCHES, page, Constants.PAER_PAGE)
         onClickListeners()
-        setPagination()
+        //setPagination()
         return bindView.root
     }
 
@@ -72,6 +73,8 @@ class HomeFragment : Fragment() {
                         bindView.pbBarId.visibility = View.INVISIBLE
                         bindView.recViewMainId.visibility = View.VISIBLE
                         passDataToVideoAdapter(resource.response)
+                        Log.d(TAG,"pexel resoponse size is ${resource.response.size}")
+                        Log.d(TAG,"list size after pixal vid ${myList.size}")
                     }
                 }
             }
@@ -85,7 +88,10 @@ class HomeFragment : Fragment() {
                         }
                     }
                     is Resource.Success -> {
-                        passDataToVideoAdapter(pixaRec.response)
+                        myList.addAll(pixaRec.response)
+                       // passDataToVideoAdapter(pixaRec.response)
+                        Log.d(TAG,"pixabay resoponse size is ${pixaRec.response.size}")
+                        Log.d(TAG,"list size after pixabay vid ${myList.size}")
                     }
                 }
             }
@@ -101,13 +107,15 @@ class HomeFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun passDataToVideoAdapter(list: ArrayList<Video>) {
+
         myList.addAll(list)
-        vidAdapter = VideosAdapter(requireContext(), myList)
+        vidAdapter = VideosAdapter(requireContext(), myList,this)
         bindView.recViewMainId.adapter = vidAdapter
         vidAdapter.notifyDataSetChanged()
     }
 
     private fun onClickListeners() {
+
         bindView.customTbId.searchViewTbId.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
             @SuppressLint("NotifyDataSetChanged")
@@ -116,7 +124,7 @@ class HomeFragment : Fragment() {
                 if (query != null) {
                     myList.clear()
                     queryToSearch = query
-                    callViewModel(queryToSearch, page, 30)
+                    callViewModel(queryToSearch, page, Constants.PAER_PAGE)
                     vidAdapter.notifyDataSetChanged()
                 } else {
                     Utils.showToast(requireContext(), "enter query to search")
@@ -135,27 +143,38 @@ class HomeFragment : Fragment() {
 
     private fun callViewModel(query: String, page: Int, per_page: Int) {
         viewModel.getPixelVideos(query, page, per_page)
-        viewModel.getPixaVideos("cars")
+        viewModel.getPixaVideos(query,page,per_page)
     }
 
-    private fun setPagination() {
-        bindView.nestedScroolViewId.viewTreeObserver
-            .addOnScrollChangedListener {
-                if (bindView.nestedScroolViewId.getChildAt(0).getBottom()
-                    <= bindView.nestedScroolViewId.getHeight() + bindView.nestedScroolViewId.getScrollY()
-                ) {
-                    //scroll view is at bottom
-                    Log.d(TAG, "page number before scrool $page")
-                    bindView.pbBarId.visibility = View.VISIBLE
-                    bindView.recViewMainId.visibility = View.INVISIBLE
-                    callViewModel(queryToSearch, ++page, Constants.PAER_PAGE)
-                    Log.d(TAG, "page number after scrool $page")
-                } else {
-                    //scroll view is not at bottom
-                    bindView.pbBarId.visibility = View.INVISIBLE
-                    bindView.recViewMainId.visibility = View.VISIBLE
-                }
-            }
+//    private fun setPagination() {
+//        bindView.nestedScroolViewId.viewTreeObserver
+//            .addOnScrollChangedListener {
+//                if (bindView.nestedScroolViewId.getChildAt(0).getBottom()
+//                    <= bindView.nestedScroolViewId.getHeight() + bindView.nestedScroolViewId.getScrollY()
+//                ) {
+//                    //scroll view is at bottom
+//                        myList.clear()
+//                    Log.d(TAG, "page number before scrool $page")
+//                    bindView.pbBarId.visibility = View.VISIBLE
+//                    bindView.recViewMainId.visibility = View.INVISIBLE
+//                    callViewModel(queryToSearch, ++page, Constants.PAER_PAGE)
+//                    Log.d(TAG, "page number after scrool $page")
+//                } else {
+//                    //scroll view is not at bottom
+//                    bindView.pbBarId.visibility = View.INVISIBLE
+//                    bindView.recViewMainId.visibility = View.VISIBLE
+//
+//                }
+//            }
+//    }
+    fun requestForNewData(){
+        myList.clear()
+        Log.d(TAG,"size after list clear ${myList.size}")
+        Log.d(TAG, "page number before scrool $page")
+        bindView.pbBarId.visibility = View.VISIBLE
+        bindView.recViewMainId.visibility = View.INVISIBLE
+        callViewModel(queryToSearch, ++page, Constants.PAER_PAGE)
+        Log.d(TAG, "page number after scrool $page")
     }
 }
 

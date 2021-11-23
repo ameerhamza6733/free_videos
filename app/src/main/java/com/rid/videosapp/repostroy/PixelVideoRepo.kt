@@ -53,12 +53,13 @@ class PixelVideoRepo {
     }
 
     suspend fun getVidoesFromPixabay(
-        query: String
+        query: String,
+        page: Int,
+        per_page: Int
     ): Event<Resource<ArrayList<Video>>> {
-
         return try {
             val myRecponse =
-                api.getVideosFromPixabay(Constants.BASE_URL_PIXABAY, query)
+                api.getVideosFromPixabay(Constants.BASE_URL_PIXABAY, query,page,per_page)
 
             return if (myRecponse.body() == null) {
                 Event(Resource.Error(null, "body null"))

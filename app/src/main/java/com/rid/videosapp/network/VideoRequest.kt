@@ -32,7 +32,9 @@ interface VideosInterface {
     @GET
     suspend fun getVideosFromPixabay(
         @Url url: String?,
-        @Query("q") query: String
+        @Query("q") query: String,
+        @Query("page") page:Int,
+        @Query("per_page")per_page:Int
     ): Response<ResponseBody>
 
 }

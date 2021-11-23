@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -18,19 +19,24 @@ import com.rid.videosapp.fragments.HomeFragmentDirections
 import com.rid.videosapp.utils.Utils
 import dev.sagar.lifescience.utils.Resource
 
-class VideosAdapter(val context: Context, val vidList: ArrayList<Video>) :
+class VideosAdapter(
+    val context: Context,
+    val vidList: ArrayList<Video>,
+    val fragment: HomeFragment
+) :
     RecyclerView.Adapter<VideosAdapter.MyViewHolder>() {
     val TAG = "VideosAdapter"
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imgView = itemView.findViewById<ImageView>(R.id.rec_view_img_view_id)
-        val morebtn=itemView.findViewById<Button>(R.id.btn_more)
+        val morebtn = itemView.findViewById<TextView>(R.id.btn_more)
+
         init {
             morebtn.setOnClickListener {
                 try {
-
-                }catch (e:Exception){
-                    Log.d(TAG,"error calling vm ${e.message}")
+                    fragment.requestForNewData()
+                } catch (e: Exception) {
+                    Log.d(TAG, "error calling vm ${e.message}")
                 }
 
             }
@@ -60,6 +66,12 @@ class VideosAdapter(val context: Context, val vidList: ArrayList<Video>) :
         Glide.with(context)
             .load(myList.videoImage)
             .into(holder.imgView)
+
+        if (position==vidList.size-1){
+            holder.morebtn.visibility=View.VISIBLE
+        }else{
+            holder.morebtn.visibility=View.INVISIBLE
+        }
     }
 
     override fun getItemCount(): Int {

@@ -30,9 +30,9 @@ class MainViewModel : ViewModel() {
        }
    }
 
-    fun getPixaVideos(query: String){
+    fun getPixaVideos(query: String,page:Int,per_page:Int){
       viewModelScope.launch(Dispatchers.IO) {
-          _pixaVideoMutableData.postValue(pixelVideoRepo.getVidoesFromPixabay(query))
+          _pixaVideoMutableData.postValue(pixelVideoRepo.getVidoesFromPixabay(query,page,per_page))
       }
     }
 }
