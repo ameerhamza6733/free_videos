@@ -3,6 +3,7 @@ package com.rid.videosapp.fragments
 import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.content.Context
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -13,13 +14,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.MediaController
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.rid.videosapp.R
 import com.rid.videosapp.`interface`.CallBackInterface
 import com.rid.videosapp.constants.Constants
@@ -36,7 +34,6 @@ class PlayVideo : Fragment() {
     var ownerName = ""
     var duration = 0
     var vidId=0
-
     val TAG = "PlayVideo"
     private lateinit var rootView: FragmentPlayVideoBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,8 +52,19 @@ class PlayVideo : Fragment() {
         vidId=args.id
         initialization()
         onClickListneres()
-        return rootView.root
 
+
+        val callbackOnBack=object :OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+
+                val action=PlayVideoDirections.actionPlayVideoToHomeFragment()
+                findNavController().navigate(action)
+            }
+
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,callbackOnBack)
+
+        return rootView.root
     }
 
     override fun onPause() {
@@ -81,6 +89,7 @@ class PlayVideo : Fragment() {
     }
 
     fun onClickListneres() {
+        val mediaController = MediaController(requireContext())
         rootView.shareId.setOnClickListener {
             Utils.shareImg(requireContext(), myUrl)
         }
@@ -91,16 +100,26 @@ class PlayVideo : Fragment() {
               }
           })
         }
-        rootView.exoplayerViewId.setOnClickListener {
 
-        }
         rootView.exoplayerViewId.setOnPreparedListener {
+            rootView.exoplayerViewId.visibility=View.VISIBLE
             it.isLooping=true
             startCountDown()
         }
         rootView.exoplayerViewId.setOnCompletionListener {
          startCountDown()
         }
+        rootView.exoplayerViewId.setMediaController(mediaController)
+
+        rootView.exoplayerViewId.setOnErrorListener(object :MediaPlayer.OnErrorListener{
+            override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
+
+                Toast.makeText(requireContext(),"Logding",Toast.LENGTH_SHORT).show()
+
+                return false
+            }
+
+        })
     }
 
     private fun downloadVideo(url:String) {
@@ -141,5 +160,11 @@ class PlayVideo : Fragment() {
                 startCountDown()
             }
         }.start()
+    }
+    private fun visibleItems(){
+        rootView.exoplayerViewId.visibility=View.VISIBLE
+        rootView.shareId.visibility=View.VISIBLE
+        rootView.vidDurationId.visibility=View.VISIBLE
+        rootView.vidOwnerTagId.visibility=View.VISIBLE
     }
 }

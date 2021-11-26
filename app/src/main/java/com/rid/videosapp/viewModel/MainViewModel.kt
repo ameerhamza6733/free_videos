@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rid.videosapp.constants.Constants
 import com.rid.videosapp.dataClasses.Video
 import com.rid.videosapp.dataClasses.pixbay.PixabayMain
 import com.rid.videosapp.dataClasses.pixbay.VideoDetails
@@ -14,11 +15,18 @@ import dev.sagar.lifescience.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
+    var page: Int = 1
+    var pageForQuery:Int=1
+   val myList= ArrayList<Video>()
+    var queryToSearch = Constants.POPULAR_SEARCHES
     val TAG = "MainViewModel"
     private val pixelVideoRepo = PixelVideoRepo()
     private val _pixelVideoMutableData:MutableLiveData<Event<Resource<ArrayList<Video>>>> = MutableLiveData()
     val pixelVideoSearchLiveData : MutableLiveData<Event<Resource<ArrayList<Video>>>> = _pixelVideoMutableData
-
+init {
+    getPixelVideos(Constants.POPULAR_SEARCHES,page,Constants.PAER_PAGE)
+    getPixaVideos(Constants.POPULAR_SEARCHES, page, Constants.PAER_PAGE)
+}
     private val _pixaVideoMutableData:MutableLiveData<Event<Resource<ArrayList<Video>>>> = MutableLiveData()
     val pixaVideosSearchData : MutableLiveData<Event<Resource<ArrayList<Video>>>> = _pixaVideoMutableData
 

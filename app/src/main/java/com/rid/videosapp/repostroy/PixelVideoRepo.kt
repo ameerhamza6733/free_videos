@@ -25,7 +25,7 @@ class PixelVideoRepo {
         page: Int,
         per_page: Int
     ): Event<Resource<ArrayList<Video>>> {
-
+        videoGen.clear()
         return try {
             val response = api.getVidoes(query, page, per_page)
             return if (response.body() == null) {
@@ -36,7 +36,7 @@ class PixelVideoRepo {
                     val abc = Video(
                         videoMainClass.videos[i].user.name,
                         videoMainClass.videos[i].image,
-                        videoMainClass.videos[i].video_files[0].link,
+                        videoMainClass.videos[i].video_files[2].link,
                         videoMainClass.videos[i].duration,
                         videoMainClass.videos[i].id
                     )
@@ -57,6 +57,7 @@ class PixelVideoRepo {
         page: Int,
         per_page: Int
     ): Event<Resource<ArrayList<Video>>> {
+        pixabay.clear()
         return try {
             val myRecponse =
                 api.getVideosFromPixabay(Constants.BASE_URL_PIXABAY, query,page,per_page)
@@ -64,16 +65,16 @@ class PixelVideoRepo {
             return if (myRecponse.body() == null) {
                 Event(Resource.Error(null, "body null"))
 
-
             } else {
                 val reponseJson = String(myRecponse.body()!!.bytes())
                 val gson = Gson()
                 val resToMianPixaby = gson.fromJson(reponseJson, PixabayMain::class.java)
                 for (i in resToMianPixaby.hits.indices) {
-
+                    val imgId=resToMianPixaby.hits[i].picture_id
+                    val imgToSet=Constants.VIDEOURl+imgId+"_960x540.jpg"
                     val vidToSend = Video(
                         resToMianPixaby.hits[i].user,
-                        resToMianPixaby.hits[i].userImageURL,
+                        imgToSet,
                         resToMianPixaby.hits[i].videos.small.url,
                         resToMianPixaby.hits[i].duration,
                         resToMianPixaby.hits[i].downloads

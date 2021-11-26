@@ -5,6 +5,6 @@ data class VideoDetails(
     val views: Int,
     val downloads: Int,
     val user: String,
-    val userImageURL: String,
+    val picture_id: String,
     val videos:VideoQualities
 )

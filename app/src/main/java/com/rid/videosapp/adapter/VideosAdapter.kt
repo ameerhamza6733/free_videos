@@ -32,14 +32,14 @@ class VideosAdapter(
         val morebtn = itemView.findViewById<TextView>(R.id.btn_more)
 
         init {
-            morebtn.setOnClickListener {
-                try {
-                    fragment.requestForNewData()
-                } catch (e: Exception) {
-                    Log.d(TAG, "error calling vm ${e.message}")
-                }
-
-            }
+//            morebtn.setOnClickListener {
+//                try {
+//                    fragment.requestForNewData()
+//                } catch (e: Exception) {
+//                    Log.d(TAG, "error calling vm ${e.message}")
+//                }
+//
+//            }
 
             itemView.setOnClickListener {
                 val action =
@@ -66,12 +66,12 @@ class VideosAdapter(
         Glide.with(context)
             .load(myList.videoImage)
             .into(holder.imgView)
-
-        if (position==vidList.size-1){
-            holder.morebtn.visibility=View.VISIBLE
-        }else{
-            holder.morebtn.visibility=View.INVISIBLE
-        }
+        Log.d(TAG, "url is ${myList.videoImage}")
+//        if (position==vidList.size-1){
+//            holder.morebtn.visibility=View.VISIBLE
+//        }else{
+//            holder.morebtn.visibility=View.INVISIBLE
+//        }
     }
 
     override fun getItemCount(): Int {
