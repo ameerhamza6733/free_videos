@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "448320924203",
+    "project_id": "vidosapp-3dbb7",
+    "storage_bucket": "vidosapp-3dbb7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:448320924203:android:9b2d74a562f6762f9a986e",
+        "android_client_info": {
+          "package_name": "com.rid.videosapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "448320924203-rtk8btote7pjaf8kcmmjv2d7oqme28t2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOF__kG-DfrWPQ28WljN1rj3Z1WOV8788"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "448320924203-rtk8btote7pjaf8kcmmjv2d7oqme28t2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

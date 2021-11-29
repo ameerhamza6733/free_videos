@@ -6,11 +6,11 @@
     android:layout_height="100dp">
 
     <ImageView
-        android:layout_marginTop="@dimen/value_16dp"
-        android:layout_marginStart="@dimen/value_16dp"
         android:id="@+id/iv_notify_app_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/value_16dp"
+        android:layout_marginTop="@dimen/value_16dp"
         android:src="@drawable/videocam_24" />
 
     <TextView
@@ -23,8 +23,10 @@
         android:layout_toEndOf="@+id/iv_notify_app_icon"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="YouTube 10:00 PM" />
-
+        android:text="YouTube 10:00 PM"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_siz_14"
+        android:textStyle="bold" />
 
 
     <ImageView
@@ -38,17 +40,19 @@
 
     <TextView
         android:id="@+id/tv_notify_tittle_two"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/iv_notify_app_icon"
         android:layout_alignBottom="@+id/iv_notify_tiitle_two"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="@dimen/value_8dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="@dimen/value_8dp"
-        android:layout_marginBottom="-4dp"
         android:layout_toStartOf="@+id/iv_notify_main_iv"
         android:layout_toEndOf="@+id/iv_notify_tiitle_two"
-        android:text="Grant Cardone" />
+        android:fontFamily="@font/comfortaa_semibold"
+        android:text="Grant Cardone"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_siz_12" />
 
     <TextView
         android:id="@+id/tv_notify_body"
@@ -56,14 +60,17 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_notify_tittle_two"
         android:layout_alignStart="@+id/tv_notify_tittle_two"
-        android:layout_marginTop="-1dp"
+        android:layout_marginTop="@dimen/value_4dp"
         android:layout_marginEnd="@dimen/value_8dp"
         android:layout_toStartOf="@+id/iv_notify_main_iv"
         android:ellipsize="end"
+        android:fontFamily="@font/comfortaa_regular"
         android:maxLines="1"
-        android:text="@string/real_estate_training_live_at" />
+        android:text="@string/real_estate_training_live_at"
+        android:textSize="@dimen/text_siz_12" />
 
     <ImageView
+        android:layout_marginTop="@dimen/value_8dp"
         android:id="@+id/iv_notify_main_iv"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

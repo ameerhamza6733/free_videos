@@ -45,9 +45,9 @@ class VideosAdapter(
                 val action =
                     HomeFragmentDirections.actionHomeFragmentToPlayVideo(
                         vidList[adapterPosition].videoUrl,
-                        vidList[absoluteAdapterPosition].ownerName,
-                        vidList[absoluteAdapterPosition].vidDuration,
-                        vidList[absoluteAdapterPosition].id
+                        vidList[adapterPosition].ownerName,
+                        vidList[adapterPosition].vidDuration,
+                        vidList[adapterPosition].id
                     )
 
                 it.findNavController().navigate(action)

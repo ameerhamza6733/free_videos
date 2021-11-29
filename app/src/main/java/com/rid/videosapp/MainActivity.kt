@@ -18,6 +18,7 @@ import androidx.core.app.NotificationCompat
 import androidx.navigation.fragment.NavHostFragment
 import com.rid.videosapp.constants.Constants
 import com.rid.videosapp.notification.CustomeNotification
+import com.rid.videosapp.repostroy.NotificationsFromFirestore
 import java.util.*
 
 
@@ -30,8 +31,10 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
+//        val myNotificatons = NotificationsFromFirestore()
+//
+//        myNotificatons.getNotifications(this)
 
-        val notificationLayout = RemoteViews(packageName, R.layout.custome_notification)
-        CustomeNotification.NotificationCall(this, notificationLayout)
+//        CustomeNotification.NotificationCall(this, notificationLayout)
     }
 }
