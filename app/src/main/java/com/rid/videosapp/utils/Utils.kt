@@ -18,15 +18,6 @@ class Utils {
             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
         }
 
-         fun openBoottomSheet(context: Context){
-            val bottomView =
-                LayoutInflater.from(context).inflate(R.layout.network_error_bottom_sheet, null)
-
-            val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialogTheme)
-
-            bottomSheetDialog.setContentView(bottomView)
-            bottomSheetDialog.show()
-        }
          fun shareImg(context: Context,url:String) {
             val intent = Intent()
             intent.action = Intent.ACTION_SEND

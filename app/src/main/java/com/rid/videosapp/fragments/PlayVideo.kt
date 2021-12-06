@@ -1,6 +1,7 @@
 package com.rid.videosapp.fragments
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.app.DownloadManager
 import android.content.Context
 import android.media.MediaPlayer
@@ -10,31 +11,26 @@ import android.os.CountDownTimer
 import android.os.Environment
 import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.MediaController
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.rid.videosapp.R
-import com.rid.videosapp.`interface`.CallBackInterface
 import com.rid.videosapp.constants.Constants
-import com.rid.videosapp.databinding.FragmentPlayVideoBinding
-import com.rid.videosapp.dialog.CustomDialog
 import com.rid.videosapp.utils.Utils
 import com.rid.videosapp.utils.toast
 import java.io.File
 import java.lang.Exception
+import android.media.MediaPlayer.OnPreparedListener
+import android.view.*
+import android.widget.*
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.rid.videosapp.databinding.FragmentPlayVideoBinding
+
 
 class PlayVideo : Fragment() {
-    val args: PlayVideoArgs by navArgs()
     var myUrl = ""
     var ownerName = ""
     var duration = 0
-    var vidId=0
+    var vidId = 0
     val TAG = "PlayVideo"
+    private lateinit var dialog: Dialog
     private lateinit var rootView: FragmentPlayVideoBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,83 +42,69 @@ class PlayVideo : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         rootView = FragmentPlayVideoBinding.inflate(layoutInflater, container, false)
-        myUrl = args.url
-        ownerName = args.name
-        duration = args.duration
-        vidId=args.id
+
+        myUrl = arguments?.getString("myUrl").toString()
+        ownerName = arguments?.getString("ownerName").toString()
+        duration = arguments?.getInt("duration", 0)!!
+        vidId = arguments?.getInt("vidId", 0)!!
         initialization()
         onClickListneres()
-
-
-        val callbackOnBack=object :OnBackPressedCallback(true){
-            override fun handleOnBackPressed() {
-
-                val action=PlayVideoDirections.actionPlayVideoToHomeFragment()
-                findNavController().navigate(action)
-            }
-
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,callbackOnBack)
-
         return rootView.root
     }
 
     override fun onPause() {
         super.onPause()
-      //  stopMediaPlayer()
         rootView.exoplayerViewId.stopPlayback()
     }
 
     override fun onStop() {
         super.onStop()
-      //  stopMediaPlayer()
         rootView.exoplayerViewId.stopPlayback()
     }
 
     private fun initialization() {
+        dialog = Dialog(requireContext())
+        ShowDialog(ownerName, duration.toString())
         rootView.exoplayerViewId.setVideoURI(Uri.parse(myUrl))
         rootView.exoplayerViewId.start()
-
         rootView.vidOwnerTagId.text = ownerName
         rootView.vidDurationId.text = duration.toString()
-
     }
 
     fun onClickListneres() {
-        val mediaController = MediaController(requireContext())
         rootView.shareId.setOnClickListener {
             Utils.shareImg(requireContext(), myUrl)
         }
-        rootView.downloadId.setOnClickListener {
-          CustomDialog.showCustomDialog(requireContext(),ownerName,object :CallBackInterface{
-              override fun onPositiveCallBack() {
-                  downloadVideo(myUrl)
-              }
-          })
-        }
 
         rootView.exoplayerViewId.setOnPreparedListener {
-            rootView.exoplayerViewId.visibility=View.VISIBLE
-            it.isLooping=true
+            it.isLooping = true
             startCountDown()
         }
-        rootView.exoplayerViewId.setOnCompletionListener {
-         startCountDown()
-        }
-        rootView.exoplayerViewId.setMediaController(mediaController)
-
-        rootView.exoplayerViewId.setOnErrorListener(object :MediaPlayer.OnErrorListener{
+        rootView.exoplayerViewId.setOnErrorListener(object : MediaPlayer.OnErrorListener {
             override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
-
-                Toast.makeText(requireContext(),"Logding",Toast.LENGTH_SHORT).show()
-
+                openBoottomSheet(requireContext(), getString(R.string.error))
+                Log.d(TAG, "P1 is $p1 P2 is $p2")
                 return false
             }
 
         })
+
+        rootView.exoplayerViewId.setOnClickListener {
+
+        }
+        rootView.exoplayerViewId.setOnPreparedListener(OnPreparedListener { mp ->
+            mp.start()
+            mp.setOnVideoSizeChangedListener { mp, arg1, arg2 -> // TODO Auto-generated method stub
+                Log.e(TAG, "Changed")
+                mp.start()
+                mp.isLooping = true
+                dialog.dismiss()
+                startCountDown()
+            }
+        })
     }
 
-    private fun downloadVideo(url:String) {
+    private fun downloadVideo(url: String) {
         try {
             val downloadmanager =
                 requireActivity().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
@@ -147,12 +129,12 @@ class PlayVideo : Fragment() {
         }
     }
 
-    fun startCountDown(){
-        object : CountDownTimer((duration*1000).toLong(), 1000) {
+    fun startCountDown() {
+        object : CountDownTimer((duration * 1000).toLong(), 1000) {
 
             @SuppressLint("SetTextI18n")
             override fun onTick(millisUntilFinished: Long) {
-                rootView.vidDurationId.setText(""+millisUntilFinished / 1000)
+                rootView.vidDurationId.setText("" + millisUntilFinished / 1000)
             }
 
             @SuppressLint("SetTextI18n")
@@ -161,10 +143,53 @@ class PlayVideo : Fragment() {
             }
         }.start()
     }
-    private fun visibleItems(){
-        rootView.exoplayerViewId.visibility=View.VISIBLE
-        rootView.shareId.visibility=View.VISIBLE
-        rootView.vidDurationId.visibility=View.VISIBLE
-        rootView.vidOwnerTagId.visibility=View.VISIBLE
+
+    @SuppressLint("SetTextI18n")
+    private fun ShowDialog(ownerName: String, duration: String) {
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.custome_dialog);
+        val tvDialogOwner = dialog.findViewById<TextView>(R.id.tv_owner_name_id)
+        val tvDialogDuration = dialog.findViewById<TextView>(R.id.tv_duraton)
+        val btnBackDialog=dialog.findViewById<ImageView>(R.id.iv_btn_back_dialog)
+        btnBackDialog.setOnClickListener {
+            goBackToMain()
+        }
+        tvDialogOwner.text = ownerName
+        tvDialogDuration.text = "$duration Sec"
+        dialog.create()
+        dialog.show()
+    }
+
+    fun openBoottomSheet(context: Context, errorMessage: String) {
+        val bottomView =
+            LayoutInflater.from(context).inflate(R.layout.bottom_sheet, null)
+        val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialogTheme)
+        bottomSheetDialog.setContentView(bottomView)
+
+        val tvMsg = bottomView.findViewById<TextView>(R.id.text_msg)
+        tvMsg.text = errorMessage
+        val btnReload = bottomView.findViewById<TextView>(R.id.btn_reload)
+        val btnGoBack = bottomView.findViewById<TextView>(R.id.id_go_back)
+        btnGoBack.setOnClickListener {
+            goBackToMain()
+            bottomSheetDialog.dismiss()
+        }
+        btnReload.setOnClickListener {
+            rootView.exoplayerViewId.stopPlayback()
+            rootView.exoplayerViewId.setVideoURI(Uri.parse(myUrl))
+            rootView.exoplayerViewId.start()
+            bottomSheetDialog.dismiss()
+        }
+
+        bottomSheetDialog.setCanceledOnTouchOutside(false)
+        bottomSheetDialog.behavior.isDraggable=false
+        bottomSheetDialog.show()
+
+    }
+    private fun goBackToMain(){
+        rootView.exoplayerViewId.stopPlayback()
+        dialog.dismiss()
+        requireActivity().onBackPressed()
     }
 }

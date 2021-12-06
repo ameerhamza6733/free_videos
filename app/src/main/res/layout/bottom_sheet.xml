@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="@drawable/shape_bottom_sheet"
-    >
+    android:orientation="vertical">
 
     <View
         android:id="@+id/view_down_btn_id"
@@ -29,15 +29,56 @@
         app:layout_constraintTop_toBottomOf="@+id/view_down_btn_id" />
 
     <TextView
-        style="@style/TextAppearance.MaterialComponents.Headline6"
+        android:id="@+id/text_msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:gravity="center"
-        android:text="No Internet Connection"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:fontFamily="@font/comfortaa_semibold"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_siz_16"
+        android:text="@string/no_internet_connection"
+        app:layout_constraintBottom_toTopOf="@+id/btn_reload"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_no_internet_connection" />
+
+    <TextView
+        android:id="@+id/btn_reload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/value_8dp"
+        android:layout_marginEnd="@dimen/value_8dp"
+        android:layout_marginBottom="16dp"
+        android:drawablePadding="@dimen/value_12dp"
+        android:fontFamily="@font/comfortaa_semibold"
+        android:gravity="center"
+        android:padding="@dimen/value_8dp"
+        android:text="@string/retry"
+        android:textColor="@color/black"
+        app:drawableLeftCompat="@drawable/ic_baseline_refresh_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/id_go_back"
+        app:layout_constraintTop_toBottomOf="@+id/text_msg" />
+
+    <TextView
+        android:id="@+id/id_go_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/value_8dp"
+        android:layout_marginEnd="@dimen/value_8dp"
+        android:drawablePadding="@dimen/value_12dp"
+        android:fontFamily="@font/comfortaa_semibold"
+        android:gravity="center"
+        android:padding="@dimen/value_8dp"
+        android:text="@string/go_back"
+        android:textColor="@color/black"
+        app:drawableLeftCompat="@drawable/ic_baseline_arrow_back_24"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_reload"
+        app:layout_constraintEnd_toStartOf="@+id/btn_reload"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_reload" />
 </androidx.constraintlayout.widget.ConstraintLayout>

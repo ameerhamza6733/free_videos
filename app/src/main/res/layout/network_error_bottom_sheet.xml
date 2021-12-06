@@ -19,7 +19,7 @@
         android:id="@+id/tv1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Net work error, Check your internet connection"
+        android:text="@string/net_work"
         app:layout_constraintStart_toEndOf="@id/image"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,7 +27,7 @@
         android:id="@+id/btRetry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Try again"
+        android:text="@string/try_again"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/image"
         app:layout_constraintTop_toBottomOf="@id/tv1" />

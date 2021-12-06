@@ -13,6 +13,10 @@
         <action
             android:id="@+id/action_homeFragment_to_playVideo"
             app:destination="@id/playVideo" />
+        <argument
+            android:name="position"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
     <fragment
         android:id="@+id/playVideo"
@@ -39,5 +43,9 @@
             android:id="@+id/action_playVideo_to_homeFragment"
             app:destination="@id/homeFragment"
             app:popUpToInclusive="true" />
+        <argument
+            android:name="positon"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 </navigation>

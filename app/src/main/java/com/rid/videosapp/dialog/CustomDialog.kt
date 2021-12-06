@@ -2,6 +2,7 @@ package com.rid.videosapp.dialog
 
 import android.app.Dialog
 import android.content.Context
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.rid.videosapp.R
 import com.rid.videosapp.`interface`.CallBackInterface
@@ -17,7 +18,7 @@ class CustomDialog {
             dialog.setCancelable(false)
             dialog.setContentView(R.layout.custome_dialog)
             val tvDialogMsg = dialog.findViewById<TextView>(R.id.tv_owner_name_id)
-            val yesBtn = dialog.findViewById<TextView>(R.id.btn_download)
+            val yesBtn = dialog.findViewById<ProgressBar>(R.id.btn_download)
             tvDialogMsg.text = ownerName
             yesBtn.setOnClickListener {
                 callBack.onPositiveCallBack()

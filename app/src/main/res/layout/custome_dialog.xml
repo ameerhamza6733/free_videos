@@ -3,59 +3,92 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
+    <ImageView
+        android:id="@+id/iv_btn_back_dialog"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="@dimen/value_8dp"
+        android:layout_marginTop="@dimen/value_8dp"
+        android:padding="@dimen/value_4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_arrow_back_24" />
     <TextView
         android:id="@+id/tv_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/value_8dp"
-        android:layout_marginTop="16dp"
         android:fontFamily="@font/comfortaa_semibold"
         android:text="@string/tag"
         android:textSize="@dimen/text_siz_22"
+        app:layout_constraintTop_toBottomOf="@+id/iv_btn_back_dialog"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        tools:layout_editor_absoluteY="8dp" />
 
     <TextView
         android:id="@+id/owner_name_tag"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/value_8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:fontFamily="@font/comfortaa_semibold"
         android:text="@string/owner_name"
         android:textColor="@color/black"
         android:textSize="@dimen/text_siz_16"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_owner_name_id"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_login" />
 
     <TextView
         android:id="@+id/tv_owner_name_id"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/value_8dp"
-        android:layout_marginTop="16dp"
         android:fontFamily="@font/comfortaa_semibold"
         android:textSize="@dimen/text_siz_16"
+        app:layout_constraintBottom_toBottomOf="@+id/owner_name_tag"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/owner_name_tag" />
+        app:layout_constraintStart_toEndOf="@+id/owner_name_tag"
+        app:layout_constraintTop_toTopOf="@+id/owner_name_tag" />
 
-    <Button
+    <ProgressBar
         android:id="@+id/btn_download"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
-        android:background="#2196F3"
-        android:text="@string/download"
-        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_owner_name_id" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_duration_tag" />
+
+    <TextView
+        android:id="@+id/tv_duration_tag"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/comfortaa_semibold"
+        android:text="@string/video_duration"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_siz_16"
+        app:layout_constraintEnd_toStartOf="@+id/tv_duraton"
+        app:layout_constraintStart_toStartOf="@+id/owner_name_tag"
+        app:layout_constraintTop_toBottomOf="@+id/owner_name_tag" />
+
+    <TextView
+        android:id="@+id/tv_duraton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/comfortaa_semibold"
+        android:textSize="@dimen/text_siz_16"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_duration_tag"
+        app:layout_constraintEnd_toEndOf="@+id/tv_owner_name_id"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/tv_duration_tag"
+        app:layout_constraintTop_toBottomOf="@+id/owner_name_tag"
+        app:layout_constraintVertical_bias="1.0" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,3 +11,4 @@ fun Fragment.toast(message: String) {
 }
 
 fun Throwable.isInternetError() = this is UnknownHostException || this is SocketTimeoutException
+

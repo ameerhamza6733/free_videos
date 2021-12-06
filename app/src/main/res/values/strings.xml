@@ -8,7 +8,14 @@
     <string name="vid">Video</string>
     <string name="owner_name">Owner Name</string>
     <string name="download">Download</string>
-    <string name="tag">Do you want yo download this video ?</string>
+    <string name="tag">Loading video please wait.....</string>
     <string name="load_more_videos">Load More Videos.......</string>
     <string name="real_estate_training_live_at">Real Estate Training Live At    </string>
+    <string name="net_work">Net work error, Check your internet connection</string>
+    <string name="try_again">Try again</string>
+    <string name="video_duration">Video Duration</string>
+    <string name="retry">Retry</string>
+    <string name="no_internet_connection">Error accur while playing video please check internet connection and retry</string>
+    <string name="error">Error While Playing Video</string>
+    <string name="go_back">GO Back</string>
 </resources>

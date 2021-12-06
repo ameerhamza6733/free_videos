@@ -20,6 +20,7 @@ class PixelVideoRepo {
     val videoGen = ArrayList<Video>()
     val pixabay = ArrayList<Video>()
     val TAG = "PixelVideoRepo"
+    var isNewData: Boolean = true
     suspend fun getData(
         query: String,
         page: Int,
@@ -31,18 +32,23 @@ class PixelVideoRepo {
             return if (response.body() == null) {
                 Event(Resource.Error(null, "body null"))
             } else {
+                isNewData = false
                 val videoMainClass = response.body()
                 for (i in videoMainClass?.videos!!.indices) {
                     val abc = Video(
                         videoMainClass.videos[i].user.name,
-                        videoMainClass.videos[i].image,
+                        videoMainClass.videos[i].video_pictures[0].picture,
                         videoMainClass.videos[i].video_files[2].link,
                         videoMainClass.videos[i].duration,
                         videoMainClass.videos[i].id
                     )
                     videoGen.add(abc)
+                    Log.d(TAG,"picture is ${videoMainClass.videos[0].video_pictures[0].picture}")
+
                 }
+
                 Event(Resource.Success(videoGen, ""))
+
             }
         } catch (e: Exception) {
             Log.d(TAG, "erors is ${e.message}")
@@ -60,7 +66,7 @@ class PixelVideoRepo {
         pixabay.clear()
         return try {
             val myRecponse =
-                api.getVideosFromPixabay(Constants.BASE_URL_PIXABAY, query,page,per_page)
+                api.getVideosFromPixabay(Constants.BASE_URL_PIXABAY, query, page, per_page)
 
             return if (myRecponse.body() == null) {
                 Event(Resource.Error(null, "body null"))
@@ -70,8 +76,8 @@ class PixelVideoRepo {
                 val gson = Gson()
                 val resToMianPixaby = gson.fromJson(reponseJson, PixabayMain::class.java)
                 for (i in resToMianPixaby.hits.indices) {
-                    val imgId=resToMianPixaby.hits[i].picture_id
-                    val imgToSet=Constants.VIDEOURl+imgId+"_960x540.jpg"
+                    val imgId = resToMianPixaby.hits[i].picture_id
+                    val imgToSet = Constants.VIDEOURl + imgId + "_960x540.jpg"
                     val vidToSend = Video(
                         resToMianPixaby.hits[i].user,
                         imgToSet,
