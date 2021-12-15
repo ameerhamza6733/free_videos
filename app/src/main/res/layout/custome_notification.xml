@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="100dp">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/iv_notify_app_icon"
@@ -23,7 +23,6 @@
         android:layout_toEndOf="@+id/iv_notify_app_icon"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="YouTube 10:00 PM"
         android:textColor="@color/black"
         android:textSize="@dimen/text_siz_14"
         android:textStyle="bold" />
@@ -50,7 +49,6 @@
         android:layout_toStartOf="@+id/iv_notify_main_iv"
         android:layout_toEndOf="@+id/iv_notify_tiitle_two"
         android:fontFamily="@font/comfortaa_semibold"
-        android:text="Grant Cardone"
         android:textColor="@color/black"
         android:textSize="@dimen/text_siz_12" />
 
@@ -70,11 +68,21 @@
         android:textSize="@dimen/text_siz_12" />
 
     <ImageView
-        android:layout_marginTop="@dimen/value_8dp"
         android:id="@+id/iv_notify_main_iv"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/value_70dp"
+        android:layout_above="@+id/textView"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/new_img" />
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_notify_body"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/value_6dp"
+        android:gravity="center" />
 </RelativeLayout>

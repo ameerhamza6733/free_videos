@@ -1,11 +1,13 @@
 package com.rid.videosapp.servieces
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.rid.videosapp.repostroy.NotificationsFromFirestore
 
+@SuppressLint("MissingFirebaseInstanceTokenRefresh")
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     val TAG = "ServiceCalled"
     val context: Context = this

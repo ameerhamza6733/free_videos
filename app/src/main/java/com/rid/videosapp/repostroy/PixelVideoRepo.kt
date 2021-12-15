@@ -37,7 +37,7 @@ class PixelVideoRepo {
                 for (i in videoMainClass?.videos!!.indices) {
                     val abc = Video(
                         videoMainClass.videos[i].user.name,
-                        videoMainClass.videos[i].video_pictures[0].picture,
+                        videoMainClass.videos[i].image,
                         videoMainClass.videos[i].video_files[2].link,
                         videoMainClass.videos[i].duration,
                         videoMainClass.videos[i].id
@@ -63,7 +63,7 @@ class PixelVideoRepo {
         page: Int,
         per_page: Int
     ): Event<Resource<ArrayList<Video>>> {
-        pixabay.clear()
+       // pixabay.clear()
         return try {
             val myRecponse =
                 api.getVideosFromPixabay(Constants.BASE_URL_PIXABAY, query, page, per_page)
@@ -77,7 +77,7 @@ class PixelVideoRepo {
                 val resToMianPixaby = gson.fromJson(reponseJson, PixabayMain::class.java)
                 for (i in resToMianPixaby.hits.indices) {
                     val imgId = resToMianPixaby.hits[i].picture_id
-                    val imgToSet = Constants.VIDEOURl + imgId + "_960x540.jpg"
+                    val imgToSet = Constants.VIDEOURl + imgId + "_295x166.jpg"
                     val vidToSend = Video(
                         resToMianPixaby.hits[i].user,
                         imgToSet,
@@ -85,10 +85,10 @@ class PixelVideoRepo {
                         resToMianPixaby.hits[i].duration,
                         resToMianPixaby.hits[i].downloads
                     )
-                    pixabay.add(vidToSend)
-
+                    videoGen.add(vidToSend)
                 }
-                Event(Resource.Success(pixabay, ""))
+                Log.d(TAG,"data from Pixa size is ${videoGen.size}  $resToMianPixaby")
+                Event(Resource.Success(videoGen, ""))
             }
         } catch (e: Exception) {
             Log.d(TAG, "erors is ${e.message}")

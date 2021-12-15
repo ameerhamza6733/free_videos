@@ -7,7 +7,6 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.os.Environment
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -22,7 +21,7 @@ import android.view.*
 import android.widget.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.rid.videosapp.databinding.FragmentPlayVideoBinding
-
+import com.rid.videosapp.utils.CommonKeys
 
 class PlayVideo : Fragment() {
     var myUrl = ""
@@ -30,6 +29,7 @@ class PlayVideo : Fragment() {
     var duration = 0
     var vidId = 0
     val TAG = "PlayVideo"
+    var vidDuration = 0
     private lateinit var dialog: Dialog
     private lateinit var rootView: FragmentPlayVideoBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,13 +43,15 @@ class PlayVideo : Fragment() {
         // Inflate the layout for this fragment
         rootView = FragmentPlayVideoBinding.inflate(layoutInflater, container, false)
 
-        myUrl = arguments?.getString("myUrl").toString()
-        ownerName = arguments?.getString("ownerName").toString()
-        duration = arguments?.getInt("duration", 0)!!
-        vidId = arguments?.getInt("vidId", 0)!!
+        return rootView.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        gettingDataFromArguments()
         initialization()
         onClickListneres()
-        return rootView.root
+
     }
 
     override fun onPause() {
@@ -62,44 +64,49 @@ class PlayVideo : Fragment() {
         rootView.exoplayerViewId.stopPlayback()
     }
 
-    private fun initialization() {
-        dialog = Dialog(requireContext())
-        ShowDialog(ownerName, duration.toString())
-        rootView.exoplayerViewId.setVideoURI(Uri.parse(myUrl))
-        rootView.exoplayerViewId.start()
-        rootView.vidOwnerTagId.text = ownerName
-        rootView.vidDurationId.text = duration.toString()
+    private fun gettingDataFromArguments() {
+
+        myUrl = arguments?.getString(CommonKeys.VID_URL).toString()
+        ownerName = arguments?.getString(CommonKeys.OWNER).toString()
+        if (arguments != null) {
+            duration = requireArguments().getInt(CommonKeys.DURATION, 0)
+            vidId = requireArguments().getInt(CommonKeys.VID_ID, 0)
+        }
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun initialization() {
+        dialog = Dialog(requireContext())
+        showProgressDialog(ownerName, duration.toString())
+        rootView.exoplayerViewId.setVideoURI(Uri.parse(myUrl))
+        rootView.vidOwnerTagId.text = ownerName
+        rootView.vidDurationId.text = duration.toString() + getString(R.string.sec)
+    }
+
+    @SuppressLint("SetTextI18n")
     fun onClickListneres() {
+
         rootView.shareId.setOnClickListener {
             Utils.shareImg(requireContext(), myUrl)
         }
 
         rootView.exoplayerViewId.setOnPreparedListener {
             it.isLooping = true
-            startCountDown()
+            dialog.dismiss()
+            rootView.exoplayerViewId.start()
         }
         rootView.exoplayerViewId.setOnErrorListener(object : MediaPlayer.OnErrorListener {
             override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
-                openBoottomSheet(requireContext(), getString(R.string.error))
-                Log.d(TAG, "P1 is $p1 P2 is $p2")
+                openBottomSheetForError(requireContext(), getString(R.string.error))
                 return false
             }
-
         })
-
-        rootView.exoplayerViewId.setOnClickListener {
-
-        }
         rootView.exoplayerViewId.setOnPreparedListener(OnPreparedListener { mp ->
             mp.start()
             mp.setOnVideoSizeChangedListener { mp, arg1, arg2 -> // TODO Auto-generated method stub
-                Log.e(TAG, "Changed")
                 mp.start()
                 mp.isLooping = true
                 dialog.dismiss()
-                startCountDown()
             }
         })
     }
@@ -110,14 +117,15 @@ class PlayVideo : Fragment() {
                 requireActivity().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val request = DownloadManager.Request(Uri.parse(url))
                 .setTitle(getString(R.string.vid))
-                .setDescription("Downloading $ownerName Video")
+                .setDescription(getString(R.string.downloading_vid) + " " + ownerName)
                 .setAllowedOverMetered(true)
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 .setDestinationUri(
                     Uri.fromFile(
                         File(
                             requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-                                .toString() + Constants.DESTINATION_FOLDER, "$ownerName$vidId.mp4"
+                                .toString() + Constants.DESTINATION_FOLDER,
+                            "$ownerName$vidId" + Constants.FORMAT
                         )
                     )
                 )
@@ -129,39 +137,24 @@ class PlayVideo : Fragment() {
         }
     }
 
-    fun startCountDown() {
-        object : CountDownTimer((duration * 1000).toLong(), 1000) {
-
-            @SuppressLint("SetTextI18n")
-            override fun onTick(millisUntilFinished: Long) {
-                rootView.vidDurationId.setText("" + millisUntilFinished / 1000)
-            }
-
-            @SuppressLint("SetTextI18n")
-            override fun onFinish() {
-                startCountDown()
-            }
-        }.start()
-    }
-
     @SuppressLint("SetTextI18n")
-    private fun ShowDialog(ownerName: String, duration: String) {
+    private fun showProgressDialog(ownerName: String, duration: String) {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
         dialog.setContentView(R.layout.custome_dialog);
         val tvDialogOwner = dialog.findViewById<TextView>(R.id.tv_owner_name_id)
         val tvDialogDuration = dialog.findViewById<TextView>(R.id.tv_duraton)
-        val btnBackDialog=dialog.findViewById<ImageView>(R.id.iv_btn_back_dialog)
+        val btnBackDialog = dialog.findViewById<ImageView>(R.id.iv_btn_back_dialog)
         btnBackDialog.setOnClickListener {
             goBackToMain()
         }
         tvDialogOwner.text = ownerName
-        tvDialogDuration.text = "$duration Sec"
+        tvDialogDuration.text = duration + getString(R.string.sec)
         dialog.create()
         dialog.show()
     }
 
-    fun openBoottomSheet(context: Context, errorMessage: String) {
+    fun openBottomSheetForError(context: Context, errorMessage: String) {
         val bottomView =
             LayoutInflater.from(context).inflate(R.layout.bottom_sheet, null)
         val bottomSheetDialog = BottomSheetDialog(context, R.style.BottomSheetDialogTheme)
@@ -183,13 +176,18 @@ class PlayVideo : Fragment() {
         }
 
         bottomSheetDialog.setCanceledOnTouchOutside(false)
-        bottomSheetDialog.behavior.isDraggable=false
+        bottomSheetDialog.behavior.isDraggable = false
         bottomSheetDialog.show()
 
     }
-    private fun goBackToMain(){
-        rootView.exoplayerViewId.stopPlayback()
-        dialog.dismiss()
+
+    private fun goBackToMain() {
+        if (rootView.exoplayerViewId.isPlaying) {
+            rootView.exoplayerViewId.stopPlayback()
+        }
+        if (dialog.isShowing) {
+            dialog.dismiss()
+        }
         requireActivity().onBackPressed()
     }
 }

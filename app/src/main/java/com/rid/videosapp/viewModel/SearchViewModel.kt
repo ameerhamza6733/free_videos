@@ -1,26 +1,22 @@
 package com.rid.videosapp.viewModel
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rid.videosapp.constants.Constants
 import com.rid.videosapp.dataClasses.Video
-import com.rid.videosapp.dataClasses.pixbay.PixabayMain
-import com.rid.videosapp.dataClasses.pixbay.VideoDetails
-import com.rid.videosapp.dataClasses.pixelVideo.response.VideoMainClass
 import com.rid.videosapp.repostroy.PixelVideoRepo
 import dev.sagar.lifescience.utils.Event
 import dev.sagar.lifescience.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
+class SearchViewModel(query: String) :ViewModel() {
     var page: Int = 1
     var isNewData=true
-    var queryToSearch = Constants.POPULAR_SEARCHES
-    val TAG = "MainViewModel"
+    var queryToSearch = ""
+    val TAG = "SearchViewModel"
     private val pixelVideoRepo = PixelVideoRepo()
     private val _pixelVideoMutableData: MutableLiveData<Event<Resource<ArrayList<Video>>>> =
         MutableLiveData()
@@ -29,8 +25,8 @@ class MainViewModel : ViewModel() {
 
     init {
 
-        getPixelVideos(Constants.POPULAR_SEARCHES, page, Constants.PAER_PAGE)
-      //  getPixaVideos(Constants.POPULAR_SEARCHES, page, Constants.PAER_PAGE)
+        getPixelVideos(query, page, Constants.PAER_PAGE)
+        //  getPixaVideos(Constants.POPULAR_SEARCHES, page, Constants.PAER_PAGE)
         page++
     }
 

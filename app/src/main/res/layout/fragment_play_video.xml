@@ -9,7 +9,6 @@
         android:id="@+id/exoplayerView_id"
         android:layout_width="@dimen/value_0dp"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         android:orientation="vertical"
         android:visibility="visible"
         android:background="@drawable/shape_scrim_bg"

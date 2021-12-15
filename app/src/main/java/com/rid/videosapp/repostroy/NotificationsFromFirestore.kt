@@ -5,29 +5,37 @@ import android.content.Context
 import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.rid.videosapp.notification.CustomeNotification
+import com.rid.videosapp.notification.CustomNotification
+import com.rid.videosapp.utils.CommonKeys
 
 class NotificationsFromFirestore {
-   private val db = Firebase.firestore
-    val TAG="NotificationsFromFirestore"
-    @SuppressLint("LongLogTag")
-     fun getNotifications(context: Context){
-        db.collection("Notificaton")
-            .get()
-            .addOnSuccessListener {result->
-                for (document in result) {
-                    Log.d(TAG, "data is form firestore  ${document.id} => ${document.data}")
-                  val mydata=document.data
-                    val tittle=mydata.getValue("tittle").toString()
-                    val dec=mydata.getValue("dec").toString()
-                    val body=mydata.getValue("body").toString()
-                    Log.d(TAG,"tittle is $tittle dec is $dec body is $body")
+    private val db = Firebase.firestore
+    val TAG = "NotificationsFromFirestore"
 
-                    CustomeNotification.NotificationCall(context,tittle,body,dec)
+    @SuppressLint("LongLogTag")
+    fun getNotifications(context: Context) {
+        db.collection(CommonKeys.FIRESTORE_COLLECTION)
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    val mydata = document.data
+                    val tittle = mydata.getValue(CommonKeys.FB_TITTLE).toString()
+                    val dec = mydata.getValue(CommonKeys.FB_DEC).toString()
+                    val body = mydata.getValue(CommonKeys.FB_BODY).toString()
+                    val imgUrl = mydata.getValue(CommonKeys.FB_IMG_URL).toString()
+                    val vidUrl = mydata.getValue(CommonKeys.FB_VID_URL).toString()
+                    CustomNotification.requestForNotification(
+                        context,
+                        tittle,
+                        body,
+                        dec,
+                        imgUrl,
+                        vidUrl
+                    )
                 }
             }
             .addOnFailureListener {
-                Log.d(TAG,"exception  ${it.message}")
+                Log.d(TAG, "exception  ${it.message}")
             }
     }
 }

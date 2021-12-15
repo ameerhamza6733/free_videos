@@ -1,45 +1,43 @@
 package com.rid.videosapp
 
-import android.annotation.SuppressLint
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.graphics.Color
-import android.media.RingtoneManager
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.widget.RemoteViews
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import androidx.navigation.fragment.NavHostFragment
-import com.rid.videosapp.constants.Constants
 import com.rid.videosapp.fragments.HomeFragment
-import com.rid.videosapp.notification.CustomeNotification
 import com.rid.videosapp.repostroy.NotificationsFromFirestore
-import java.util.*
+import com.rid.videosapp.utils.CommonKeys
 
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val notificationIntent = intent.getStringExtra(CommonKeys.NOTIFICATION_URL)
+        if (notificationIntent != null) {
+            val bundle = Bundle()
+            bundle.putString(CommonKeys.VID_URL, notificationIntent)
+            val home = HomeFragment()
+            home.arguments = bundle
+            supportFragmentManager
+                .beginTransaction()
+                .add((R.id.fragment_container), home)
+                .commit()
 
-        supportFragmentManager
-            .beginTransaction()
-            .replace((R.id.fragment_container),HomeFragment())
-            .commit()
-//        val navHostFragment =
-//            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-//        val navController = navHostFragment.navController
-//        val myNotificatons = NotificationsFromFirestore()
-//        myNotificatons.getNotifications(this)
-
-//        CustomeNotification.NotificationCall(this, notificationLayout)
+        } else {
+            supportFragmentManager
+                .beginTransaction()
+                .replace((R.id.fragment_container), HomeFragment())
+                .commit()
+        }
+//        val notificationsFromFirestore=NotificationsFromFirestore()
+//        notificationsFromFirestore.getNotifications(this)
+//        CustomeNotification.requestForNotification(
+//            this,
+//            "hello",
+//            "hi",
+//            "waseem asghar",
+//            "https://images.pexels.com/photos/2014422/pexels-photo-2014422.jpeg?auto=compress&cs=tinysrgb&dpr=1&fit=crop&h=200&w=280",
+//            "https://player.vimeo.com/external/435674472.hd.mp4?s=dec3d88a57aa801ff5c9bede151e48d21d16c46f&profile_id=174&oauth2_token_id=57447761"
+//        )
     }
 }

@@ -1,37 +1,30 @@
 package com.rid.videosapp.adapter
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rid.videosapp.R
 import com.rid.videosapp.dataClasses.Video
 import com.rid.videosapp.fragments.HomeFragment
-import com.rid.videosapp.fragments.HomeFragmentDirections
 import com.rid.videosapp.fragments.PlayVideo
-import android.os.Bundle
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.firebase.installations.Utils
+import com.rid.videosapp.fragments.SearchVideos
 import com.rid.videosapp.utils.CommonKeys
 
-class VideosAdapter(
+class SearchVidAdapter(
     val context: Context,
     val vidList: ArrayList<Video>,
-    val fragment: HomeFragment
 ) :
-    RecyclerView.Adapter<VideosAdapter.MyViewHolder>() {
+    RecyclerView.Adapter<SearchVidAdapter.MyViewHolder>() {
     val TAG = "VideosAdapter"
-
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imgView = itemView.findViewById<ImageView>(R.id.rec_view_img_view_id)
         init {
@@ -41,12 +34,12 @@ class VideosAdapter(
                 args.putString(CommonKeys.OWNER,vidList[adapterPosition].ownerName)
                 args.putInt(CommonKeys.DURATION,vidList[adapterPosition].vidDuration)
                 args.putInt(CommonKeys.VID_ID,vidList[adapterPosition].id)
-                val playVideo=PlayVideo()
+                val playVideo= PlayVideo()
                 playVideo.arguments=args
                 val fm: FragmentManager = (context as AppCompatActivity).supportFragmentManager
                 val ft: FragmentTransaction = fm.beginTransaction()
                 ft.replace(R.id.fragment_container,playVideo)
-                ft.addToBackStack(HomeFragment().TAG)
+                ft.addToBackStack(SearchVideos().TAG)
                 ft.commit()
             }
         }
@@ -60,18 +53,14 @@ class VideosAdapter(
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val myList = vidList[position]
-
         Glide.with(context)
             .load(myList.videoImage)
             .placeholder(R.drawable.place_holder)
             .into(holder.imgView)
-
     }
 
     override fun getItemCount(): Int {
         return vidList.size
     }
-
-
 
 }

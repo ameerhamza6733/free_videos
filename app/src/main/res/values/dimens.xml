@@ -12,7 +12,11 @@
     <dimen name="value_16dp">16dp</dimen>
     <dimen name="value_18dp">18dp</dimen>
     <dimen name="value_22dp">22dp</dimen>
+    <dimen name="value_24dp">24dp</dimen>
     <dimen name="value_32dp">32dp</dimen>
+    <dimen name="value_35dp">35dp</dimen>
+    <dimen name="value_50dp">50dp</dimen>
+    <dimen name="value_75dp">75dp</dimen>
     <dimen name="cv_corners">6dp</dimen>
     <dimen name="cv_elevation">4dp</dimen>
     <dimen name="text_siz_12">12sp</dimen>
