@@ -20,8 +20,9 @@ import android.media.MediaPlayer.OnPreparedListener
 import android.view.*
 import android.widget.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.rid.videosapp.databinding.FragmentPlayVideoBinding
 import com.rid.videosapp.utils.CommonKeys
+import androidx.appcompat.app.AppCompatActivity
+import com.rid.videosapp.databinding.FragmentPlayVideoBinding
 
 class PlayVideo : Fragment() {
     var myUrl = ""
@@ -34,6 +35,7 @@ class PlayVideo : Fragment() {
     private lateinit var rootView: FragmentPlayVideoBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        getActivity()?.getActionBar()?.hide()
     }
 
     override fun onCreateView(
@@ -42,7 +44,11 @@ class PlayVideo : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         rootView = FragmentPlayVideoBinding.inflate(layoutInflater, container, false)
-
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        requireActivity().window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         return rootView.root
     }
 
@@ -52,6 +58,11 @@ class PlayVideo : Fragment() {
         initialization()
         onClickListneres()
 
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 
     override fun onPause() {

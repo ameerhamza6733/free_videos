@@ -184,6 +184,7 @@ class HomeFragment : Fragment() {
             val fm: FragmentManager = (context as AppCompatActivity).supportFragmentManager
             val ft: FragmentTransaction = fm.beginTransaction()
             ft.add(R.id.fragment_container, playVideo)
+            ft.addToBackStack(TAG)
             ft.commit()
         }
     }

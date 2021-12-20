@@ -89,7 +89,7 @@ class CustomNotification {
                 val notificationBuilder = NotificationCompat.Builder(context, Constants.CAHNNEL_ID)
                     .setSmallIcon(R.drawable.videocam_24)
                     .setCustomBigContentView(notificationLayout)
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setContentIntent(pendingIntent)
                 notificationManager.notify(notificationID, notificationBuilder.build())
             } catch (e: Exception) {

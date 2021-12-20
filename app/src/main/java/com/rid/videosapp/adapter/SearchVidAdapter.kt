@@ -2,7 +2,6 @@ package com.rid.videosapp.adapter
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rid.videosapp.R
 import com.rid.videosapp.dataClasses.Video
-import com.rid.videosapp.fragments.HomeFragment
 import com.rid.videosapp.fragments.PlayVideo
 import com.rid.videosapp.fragments.SearchVideos
 import com.rid.videosapp.utils.CommonKeys
@@ -55,7 +53,7 @@ class SearchVidAdapter(
         val myList = vidList[position]
         Glide.with(context)
             .load(myList.videoImage)
-            .placeholder(R.drawable.place_holder)
+            .placeholder(R.drawable.new_img_my)
             .into(holder.imgView)
     }
 

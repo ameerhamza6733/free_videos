@@ -1,27 +1,20 @@
 package com.rid.videosapp.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rid.videosapp.R
 import com.rid.videosapp.dataClasses.Video
 import com.rid.videosapp.fragments.HomeFragment
-import com.rid.videosapp.fragments.HomeFragmentDirections
 import com.rid.videosapp.fragments.PlayVideo
 import android.os.Bundle
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.firebase.installations.Utils
 import com.rid.videosapp.utils.CommonKeys
 
 class VideosAdapter(
@@ -63,7 +56,7 @@ class VideosAdapter(
 
         Glide.with(context)
             .load(myList.videoImage)
-            .placeholder(R.drawable.place_holder)
+            .placeholder(R.drawable.new_img_my)
             .into(holder.imgView)
 
     }
