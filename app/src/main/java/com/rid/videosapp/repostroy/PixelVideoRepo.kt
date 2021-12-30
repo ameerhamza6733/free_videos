@@ -28,7 +28,7 @@ class PixelVideoRepo {
     ): Event<Resource<ArrayList<Video>>> {
         videoGen.clear()
         return try {
-            val response = api.getVidoes(query, page, per_page)
+            val response = api.getVidoes(query, page, per_page,"portrait")
             return if (response.body() == null) {
                 Event(Resource.Error(null, "body null"))
             } else {

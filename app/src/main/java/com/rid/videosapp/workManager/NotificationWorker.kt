@@ -1,10 +1,12 @@
 package com.rid.videosapp.workManager
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.task10driverapp.source.local.prefrance.PrefUtils
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -12,6 +14,7 @@ import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.rid.videosapp.R
 import com.rid.videosapp.notification.CustomNotification
 import com.rid.videosapp.repostroy.NotificationsFromFirestore
+import com.rid.videosapp.utils.CommonKeys
 
 class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
@@ -55,8 +58,13 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
                     if (isNew==oldKey){
                         Log.d(TAG,"remote key $isNew")
                     }else{
+
                         PrefUtils.setString(applicationContext,"newnot",isNew)
                         callNotification()
+                        val bundle = Bundle()
+                        val firebaseAnalytics = FirebaseAnalytics.getInstance(applicationContext)
+                        bundle.putString(CommonKeys.LOG_EVENT, "new notification against key $isNew")
+                        firebaseAnalytics.logEvent(CommonKeys.NEW_NOTIFICAION, bundle)
                         Log.d(TAG,"remote key is else $isNew")
                     }
 

@@ -26,7 +26,8 @@ interface VideosInterface {
     suspend fun getVidoes(
         @Query("query") query: String,
         @Query("page") page: Int,
-        @Query("per_page") per_page: Int
+        @Query("per_page") per_page: Int,
+        @Query("orientation") orientation:String
     ): Response<VideoMainClass>
 
     @GET

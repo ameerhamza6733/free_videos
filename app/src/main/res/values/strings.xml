@@ -18,7 +18,13 @@
     <string name="no_internet_connection">Error accur while playing video please check internet connection and retry</string>
     <string name="error">Error While Playing Video</string>
     <string name="go_back">GO Back</string>
+    <string name="ad_attribution">Ad</string>
     <string name="sec"> sec</string>
     <string name="search_view_empty">Enter Query First</string>
     <string name="downloading_vid">Downloading Video Of</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="top_categories">Top Categories</string>
+    <string name="cancel">Cancel</string>
+    <string name="watch_video">Watch Video</string>
+    <string name="watch_tittle">Watch Video To Continue Download</string>
 </resources>

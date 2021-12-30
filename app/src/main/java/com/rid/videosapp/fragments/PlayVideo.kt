@@ -22,20 +22,25 @@ import android.widget.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.rid.videosapp.utils.CommonKeys
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.rid.videosapp.customeDialog.DownloadDialog
 import com.rid.videosapp.databinding.FragmentPlayVideoBinding
+import com.rid.videosapp.utils.MyRewardedAds
 
 class PlayVideo : Fragment() {
+    private lateinit var bundle: Bundle
     var myUrl = ""
     var ownerName = ""
     var duration = 0
     var vidId = 0
     val TAG = "PlayVideo"
     var vidDuration = 0
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var dialog: Dialog
     private lateinit var rootView: FragmentPlayVideoBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getActivity()?.getActionBar()?.hide()
+
     }
 
     override fun onCreateView(
@@ -45,10 +50,7 @@ class PlayVideo : Fragment() {
         // Inflate the layout for this fragment
         rootView = FragmentPlayVideoBinding.inflate(layoutInflater, container, false)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        requireActivity().window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
+        MyRewardedAds.loadRewardedAd(requireContext())
         return rootView.root
     }
 
@@ -87,6 +89,7 @@ class PlayVideo : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun initialization() {
+        firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         dialog = Dialog(requireContext())
         showProgressDialog(ownerName, duration.toString())
         rootView.exoplayerViewId.setVideoURI(Uri.parse(myUrl))
@@ -96,6 +99,9 @@ class PlayVideo : Fragment() {
 
     @SuppressLint("SetTextI18n")
     fun onClickListneres() {
+        rootView.downloadId.setOnClickListener {
+            DownloadDialog(myUrl,ownerName).show(parentFragmentManager,TAG)
+        }
 
         rootView.shareId.setOnClickListener {
             Utils.shareImg(requireContext(), myUrl)
@@ -104,11 +110,15 @@ class PlayVideo : Fragment() {
         rootView.exoplayerViewId.setOnPreparedListener {
             it.isLooping = true
             dialog.dismiss()
+            bundle.putString(CommonKeys.LOG_EVENT, "video play successfully")
+            firebaseAnalytics.logEvent(CommonKeys.VID_PLAYING, bundle)
             rootView.exoplayerViewId.start()
         }
         rootView.exoplayerViewId.setOnErrorListener(object : MediaPlayer.OnErrorListener {
             override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
                 openBottomSheetForError(requireContext(), getString(R.string.error))
+                bundle.putString(CommonKeys.LOG_EVENT, "internet error while playing video")
+                firebaseAnalytics.logEvent(CommonKeys.INTERNET_ERROR, bundle)
                 return false
             }
         })
@@ -122,37 +132,11 @@ class PlayVideo : Fragment() {
         })
     }
 
-    private fun downloadVideo(url: String) {
-        try {
-            val downloadmanager =
-                requireActivity().getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            val request = DownloadManager.Request(Uri.parse(url))
-                .setTitle(getString(R.string.vid))
-                .setDescription(getString(R.string.downloading_vid) + " " + ownerName)
-                .setAllowedOverMetered(true)
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setDestinationUri(
-                    Uri.fromFile(
-                        File(
-                            requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-                                .toString() + Constants.DESTINATION_FOLDER,
-                            "$ownerName$vidId" + Constants.FORMAT
-                        )
-                    )
-                )
-            downloadmanager.enqueue(request)
-            toast(getString(R.string.downloading))
-
-        } catch (e: Exception) {
-            Log.d(TAG, "failed ${e.message}")
-        }
-    }
-
     @SuppressLint("SetTextI18n")
     private fun showProgressDialog(ownerName: String, duration: String) {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(true);
-        dialog.setContentView(R.layout.custome_dialog);
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.custome_dialog)
         val tvDialogOwner = dialog.findViewById<TextView>(R.id.tv_owner_name_id)
         val tvDialogDuration = dialog.findViewById<TextView>(R.id.tv_duraton)
         val btnBackDialog = dialog.findViewById<ImageView>(R.id.iv_btn_back_dialog)
@@ -180,6 +164,10 @@ class PlayVideo : Fragment() {
             bottomSheetDialog.dismiss()
         }
         btnReload.setOnClickListener {
+
+            bundle.putString(CommonKeys.LOG_EVENT, "retry for video")
+            firebaseAnalytics.logEvent(CommonKeys.RETRY_CLICKED, bundle)
+
             rootView.exoplayerViewId.stopPlayback()
             rootView.exoplayerViewId.setVideoURI(Uri.parse(myUrl))
             rootView.exoplayerViewId.start()

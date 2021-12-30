@@ -21,6 +21,7 @@ import java.util.*
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.view.View
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.rid.videosapp.utils.CommonKeys
@@ -29,6 +30,7 @@ import com.rid.videosapp.utils.CommonKeys
 class CustomNotification {
     companion object {
         val TAG = "CustomeNotification"
+
         @SuppressLint("ResourceAsColor")
         fun requestForNotification(
             context: Context,
@@ -50,7 +52,7 @@ class CustomNotification {
                         resource: Bitmap,
                         transition: Transition<in Bitmap>?
                     ) {
-                        triggerNotificationToShow(context, tittle, body, dec, resource,vidUrl)
+                        triggerNotificationToShow(context, tittle, body, dec, resource, vidUrl)
 
                     }
                 })
@@ -65,6 +67,7 @@ class CustomNotification {
             vidUrl: String
         ) {
             val notificationLayout = RemoteViews(context.packageName, R.layout.custome_notification)
+
             val intent = Intent(context, MainActivity::class.java)
             intent.putExtra(
                 CommonKeys.NOTIFICATION_URL,
@@ -76,6 +79,11 @@ class CustomNotification {
                     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 val notificationID = Random().nextInt(Constants.BOUND)
                 notificationManager.cancelAll()
+                if (vidUrl.contains("jpeg") || vidUrl.contains("jpg") || vidUrl.contains("png")) {
+                    notificationLayout.setViewVisibility(R.id.imageView3, View.INVISIBLE)
+                }else{
+                    notificationLayout.setViewVisibility(R.id.imageView3, View.VISIBLE)
+                }
                 notificationLayout.setTextViewText(R.id.tv_notify_tittle_id, tittle)
                 notificationLayout.setTextViewText(R.id.tv_notify_tittle_two, dec)
                 notificationLayout.setTextViewText(R.id.tv_notify_body, body)
@@ -88,6 +96,7 @@ class CustomNotification {
                     RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
                 val notificationBuilder = NotificationCompat.Builder(context, Constants.CAHNNEL_ID)
                     .setSmallIcon(R.drawable.videocam_24)
+                    .setCustomContentView(notificationLayout)
                     .setCustomBigContentView(notificationLayout)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setContentIntent(pendingIntent)

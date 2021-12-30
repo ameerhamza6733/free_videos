@@ -2,7 +2,7 @@ package com.rid.videosapp.constants
 
 class Constants {
     companion object {
-
+        const val AD_UNIT_ID = "ca-app-pub-3940256099942544/3419835294"
         const val POPULAR_SEARCHES = "nature"
         const val DESTINATION_FOLDER = "Pixel Videos"
         const val BASE_URL_PIXABAY =

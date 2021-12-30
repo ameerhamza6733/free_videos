@@ -5,11 +5,12 @@
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/value_2dp">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/rec_view_img_view_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
+        app:shapeAppearanceOverlay="@style/MainCircular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -19,6 +20,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/ic_baseline_videocam_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="@dimen/value_4dp"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,5 +13,13 @@ class CommonKeys {
         const val FB_IMG_URL="url"
         const val FB_VID_URL="vidUrl"
         const val FIRESTORE_COLLECTION="Notificaton"
+        const val LOG_EVENT="key_for_log_event"
+        const val SEARCHED_CLICKED="search_clicked"
+        const val VIDEOS_PLAY_CLICKED="video_play_clicked"
+        const val VIDEOS_FROM_CATEGORIES="categories_clicked"
+        const val NEW_NOTIFICAION="new_notification_key_get"
+        const val VID_PLAYING="video_play_successfully"
+        const val INTERNET_ERROR="internet_error"
+        const val RETRY_CLICKED="retry_clicked_for_video"
     }
 }

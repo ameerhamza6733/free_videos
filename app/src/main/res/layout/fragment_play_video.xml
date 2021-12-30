@@ -29,14 +29,16 @@
         />
 
     <ImageButton
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/download_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/value_16dp"
         android:background="@drawable/ic_download_for_offline_24"
-        app:layout_constraintBottom_toTopOf="@+id/vid_duration_id"
-        app:layout_constraintStart_toStartOf="@+id/vid_duration_id" />
+        app:layout_constraintBottom_toTopOf="@+id/share_id"
+        app:layout_constraintStart_toStartOf="@+id/share_id"
+        app:layout_constraintEnd_toEndOf="@+id/share_id"
+        />
 
     <TextView
         android:id="@+id/vid_duration_id"

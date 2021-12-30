@@ -3,14 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="80dp">
 
     <ImageView
         android:id="@+id/iv_notify_app_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/value_16dp"
-        android:layout_marginTop="@dimen/value_16dp"
+        android:layout_alignTop="@+id/notification_app_icon"
+        android:layout_marginStart="@dimen/value_4dp"
+        android:layout_toEndOf="@+id/notification_app_icon"
         android:src="@drawable/videocam_24" />
 
     <TextView
@@ -34,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_notify_tittle_id"
         android:layout_alignStart="@+id/iv_notify_app_icon"
-        android:layout_marginTop="@dimen/value_8dp"
+        android:layout_marginTop="@dimen/value_6dp"
         android:src="@drawable/ic_baseline_brightness_1_24" />
 
     <TextView
@@ -42,12 +43,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/iv_notify_app_icon"
+        android:layout_alignStart="@+id/tv_notify_tittle_id"
         android:layout_alignBottom="@+id/iv_notify_tiitle_two"
-        android:layout_marginStart="@dimen/value_8dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="@dimen/value_8dp"
         android:layout_toStartOf="@+id/iv_notify_main_iv"
-        android:layout_toEndOf="@+id/iv_notify_tiitle_two"
         android:fontFamily="@font/comfortaa_semibold"
         android:textColor="@color/black"
         android:textSize="@dimen/text_siz_12" />
@@ -70,11 +70,13 @@
     <ImageView
         android:id="@+id/iv_notify_main_iv"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/value_70dp"
+        android:layout_height="match_parent"
         android:layout_above="@+id/textView"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:src="@drawable/place" />
+
 
     <TextView
         android:id="@+id/textView"
@@ -84,5 +86,32 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/value_6dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/notification_app_icon"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="@dimen/value_4dp"
+        android:layout_marginTop="@dimen/value_4dp"
+        android:layout_marginEnd="@dimen/value_4dp"
+        android:layout_marginBottom="@dimen/value_4dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/ic_launcher_round" />
+
+    <ImageView
+        android:visibility="visible"
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/iv_notify_main_iv"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/value_16dp"
+        android:src="@drawable/ic_baseline_play_circle_outline_24"
+        />
 </RelativeLayout>

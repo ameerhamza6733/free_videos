@@ -7,20 +7,24 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.rid.videosapp.R
 import com.rid.videosapp.adapter.SearchVidAdapter
 import com.rid.videosapp.constants.Constants
 import com.rid.videosapp.dataClasses.Video
 import com.rid.videosapp.databinding.FragmentSearchVideosBinding
+import com.rid.videosapp.utils.CommonKeys
 import com.rid.videosapp.utils.Utils
 import com.rid.videosapp.utils.isInternetError
 import com.rid.videosapp.viewModel.SearchViewModel
@@ -30,16 +34,18 @@ import dev.sagar.lifescience.utils.Resource
 class SearchVideos : Fragment() {
     private lateinit var bindView: FragmentSearchVideosBinding
     private lateinit var viewModel: SearchViewModel
-    private lateinit var staggeredGridLayoutManager: StaggeredGridLayoutManager
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var staggeredGridLayoutManager: GridLayoutManager
     val TAG = "SearchVideos"
-    var queryToSend=""
+    var queryToSend = ""
     private lateinit var bundle: Bundle
     var myList = ArrayList<Video>()
     private lateinit var vidAdapter: SearchVidAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         queryToSend = arguments?.get(Constants.QUERY_KEY).toString()
-        viewModel = ViewModelProvider(this,ViewModelFactory(queryToSend)).get(SearchViewModel::class.java)
+        viewModel =
+            ViewModelProvider(this, ViewModelFactory(queryToSend)).get(SearchViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -48,19 +54,26 @@ class SearchVideos : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         bindView = FragmentSearchVideosBinding.inflate(layoutInflater, container, false)
+//        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+//        requireActivity().window.setFlags(
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN
+//        )
+
         return bindView.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-       viewModel.queryToSearch =queryToSend
-        bindView.customTbId.searchViewTbId.setQuery(viewModel.queryToSearch,false)
+        viewModel.queryToSearch = queryToSend
+        bindView.customTbId.searchViewTbId.setQuery(viewModel.queryToSearch, false)
         initialization()
         callingAndObservingViewModel()
         onClickListeners()
         passDataToVideoAdapter()
-        bindView.customTbId.searchViewTbId.setQuery(queryToSend,false)
+        bindView.customTbId.searchViewTbId.setQuery(queryToSend, false)
     }
+
     @SuppressLint("NotifyDataSetChanged")
     private fun callingAndObservingViewModel() {
         viewModel.pixelVideoSearchLiveData.observe(viewLifecycleOwner, {
@@ -75,7 +88,7 @@ class SearchVideos : Fragment() {
                         bindView.pbBarId.visibility = View.VISIBLE
                     }
                     is Resource.Success -> {
-                        bindView.pbHorizontalId.visibility=View.INVISIBLE
+                        bindView.pbHorizontalId.visibility = View.INVISIBLE
                         bindView.pbBarId.visibility = View.INVISIBLE
                         bindView.recViewMainId.visibility = View.VISIBLE
                         if (viewModel.isNewData) {
@@ -88,13 +101,13 @@ class SearchVideos : Fragment() {
             }
         })
     }
+
     private fun initialization() {
-        bundle= Bundle()
+        firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
+        bundle = Bundle()
         staggeredGridLayoutManager =
-            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        staggeredGridLayoutManager.gapStrategy =
-            StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS
-        staggeredGridLayoutManager.isAutoMeasureEnabled=false
+            GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
+        staggeredGridLayoutManager.isAutoMeasureEnabled = false
         bindView.recViewMainId.layoutManager = staggeredGridLayoutManager
         bindView.recViewMainId.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -107,12 +120,14 @@ class SearchVideos : Fragment() {
             }
         })
     }
+
     @SuppressLint("NotifyDataSetChanged")
     private fun passDataToVideoAdapter() {
         vidAdapter = SearchVidAdapter(requireContext(), myList)
         bindView.recViewMainId.hasFixedSize()
         bindView.recViewMainId.adapter = vidAdapter
     }
+
     private fun onClickListeners() {
         bindView.customTbId.searchViewTbId.setOnSearchClickListener {
             bindView.customTbId.btnSearchId.visibility = View.INVISIBLE
@@ -122,21 +137,25 @@ class SearchVideos : Fragment() {
             @SuppressLint("NotifyDataSetChanged")
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
+                    bundle.putString(CommonKeys.LOG_EVENT,"searched query from SearchVidoe "+query)
+                    firebaseAnalytics.logEvent(CommonKeys.SEARCHED_CLICKED,bundle)
+
                     val fm: FragmentManager = (context as AppCompatActivity).supportFragmentManager
-                    bundle.putString(Constants.QUERY_KEY,query)
-                    val searchVideos=SearchVideos()
-                    searchVideos.arguments=bundle
+                    bundle.putString(Constants.QUERY_KEY, query)
+                    val searchVideos = SearchVideos()
+                    searchVideos.arguments = bundle
                     val ft: FragmentTransaction = fm.beginTransaction()
-                    ft.replace(R.id.fragment_container,searchVideos)
+                    ft.replace(R.id.fragment_container, searchVideos)
                     ft.addToBackStack(SearchVideos().TAG)
                     ft.commit()
-                    bindView.customTbId.searchViewTbId.setQuery(queryToSend,false)
+                    bindView.customTbId.searchViewTbId.setQuery(queryToSend, false)
                     vidAdapter.notifyDataSetChanged()
                 } else {
                     Utils.showToast(requireContext(), getString(R.string.search_view_empty))
                 }
                 return false
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
                 return false
             }
@@ -145,13 +164,14 @@ class SearchVideos : Fragment() {
             requestForNewData()
         }
     }
+
     private fun callViewModel(query: String, page: Int, per_page: Int) {
         viewModel.getPixelVideos(query, page, per_page)
         viewModel.page++
     }
 
     private fun requestForNewData() {
-        bindView.pbHorizontalId.visibility=View.VISIBLE
+        bindView.pbHorizontalId.visibility = View.VISIBLE
         viewModel.isNewData = true
         callViewModel(viewModel.queryToSearch, viewModel.page, Constants.PAER_PAGE)
         viewModel.page++
@@ -172,7 +192,7 @@ class SearchVideos : Fragment() {
             bottomSheetDialog.dismiss()
         }
         bottomSheetDialog.setCanceledOnTouchOutside(false)
-        bottomSheetDialog.behavior.isDraggable=false
+        bottomSheetDialog.behavior.isDraggable = false
         bottomSheetDialog.show()
     }
 
