@@ -3,7 +3,10 @@ package com.rid.videosapp.fragments
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.app.DownloadManager
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -12,20 +15,17 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import com.rid.videosapp.R
 import com.rid.videosapp.constants.Constants
-import com.rid.videosapp.utils.Utils
-import com.rid.videosapp.utils.toast
 import java.io.File
 import java.lang.Exception
 import android.media.MediaPlayer.OnPreparedListener
 import android.view.*
 import android.widget.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.rid.videosapp.utils.CommonKeys
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.rid.videosapp.customeDialog.DownloadDialog
 import com.rid.videosapp.databinding.FragmentPlayVideoBinding
-import com.rid.videosapp.utils.MyRewardedAds
+import com.rid.videosapp.utils.*
 
 class PlayVideo : Fragment() {
     private lateinit var bundle: Bundle
@@ -38,8 +38,26 @@ class PlayVideo : Fragment() {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var dialog: Dialog
     private lateinit var rootView: FragmentPlayVideoBinding
+    private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent) {
+            //Fetching the download id received with the broadcast
+
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            val  mDownloadManager = context!!
+                .getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val mostRecentDownload: Uri =
+                mDownloadManager.getUriForDownloadedFile(id)
+            Log.d(TAG,"wallaper downlaod ${mostRecentDownload.path} ${id}")
+            //Checking if the received broadcast is for our enqueued download by matching download id
+            DownloadUtils.mVideoWallpaper.setToWallPaper(context,mostRecentDownload,false)
+
+        }
+
+
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requireActivity(). registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
     }
 
@@ -95,6 +113,12 @@ class PlayVideo : Fragment() {
         rootView.exoplayerViewId.setVideoURI(Uri.parse(myUrl))
         rootView.vidOwnerTagId.text = ownerName
         rootView.vidDurationId.text = duration.toString() + getString(R.string.sec)
+    }
+
+
+    override fun onDestroy() {
+        requireActivity(). unregisterReceiver(onDownloadComplete);
+        super.onDestroy()
     }
 
     @SuppressLint("SetTextI18n")

@@ -2,6 +2,7 @@ package com.rid.videosapp.repostroy
 
 import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.rid.videosapp.constants.Constants
 import com.rid.videosapp.dataClasses.Video
 import com.rid.videosapp.dataClasses.pixbay.PixabayMain
@@ -34,7 +35,9 @@ class PixelVideoRepo {
             } else {
                 isNewData = false
                 val videoMainClass = response.body()
+                val gson=  GsonBuilder().setPrettyPrinting().create()
                 for (i in videoMainClass?.videos!!.indices) {
+                    Log.d(TAG,"videoMainClass ${gson.toJson(videoMainClass)}")
                     val abc = Video(
                         videoMainClass.videos[i].user.name,
                         videoMainClass.videos[i].image,

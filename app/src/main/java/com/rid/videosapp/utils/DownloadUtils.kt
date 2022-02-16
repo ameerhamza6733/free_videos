@@ -8,14 +8,17 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import com.rid.videosapp.servieces.VideoWallpaper
 import java.io.File
-import java.lang.Exception
 
 class DownloadUtils {
-    companion object{
+
+    companion object {
+        var mVideoWallpaper = VideoWallpaper()
         val RootDirectoryFBShow =
-            File(Environment.getExternalStorageDirectory().toString() + "/Download/My Videos")
+            File(Environment.getDownloadCacheDirectory().toString() + "/Download/My Videos")
         const val RootDirectoryFB = "/My Videos/"
+
         @SuppressLint("ObsoleteSdkInt")
         fun downloadFile(
             downloadPath: String?,
@@ -44,7 +47,9 @@ class DownloadUtils {
                             ).absolutePath
                         ),
                         null
-                    ) { path, uri -> }
+                    )
+                    { path, _uri ->
+                    }
                 } else {
                     context.sendBroadcast(
                         Intent(

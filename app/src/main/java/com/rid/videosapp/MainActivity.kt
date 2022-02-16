@@ -22,6 +22,8 @@ import com.google.android.gms.ads.MobileAds
 import com.rid.videosapp.utils.Utils
 
 class MainActivity : AppCompatActivity() {
+    private var countDownTimer: CountDownTimer?=null
+
     private val TAG = "MainActivity"
     private var secondsRemaining: Long = 0L
     private val COUNTER_TIME = 3L
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        countDownTimer?.cancel()
         super.onDestroy()
         window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
@@ -47,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
     private fun createTimer(seconds: Long) {
-        val countDownTimer: CountDownTimer = object : CountDownTimer(seconds * 1000, 1000) {
+         countDownTimer = object : CountDownTimer(seconds * 1000, 1000) {
             @SuppressLint("SetTextI18n")
             override fun onTick(millisUntilFinished: Long) {
                 secondsRemaining = millisUntilFinished / 1000 + 1
@@ -78,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                     })
             }
         }
-        countDownTimer.start()
+        countDownTimer?.start()
     }
     private fun startActivity(){
         val notificationIntent = intent.getStringExtra(CommonKeys.NOTIFICATION_URL)

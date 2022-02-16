@@ -1,4 +1,5 @@
 package com.rid.videosapp.customeDialog
+import android.app.DownloadManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
@@ -18,6 +19,17 @@ import com.rid.videosapp.utils.DownloadUtils
 
 import com.rid.videosapp.utils.MyRewardedAds
 import java.util.*
+import android.widget.Toast
+
+import com.rid.videosapp.MainActivity
+
+import android.content.Intent
+
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.IntentFilter
+import android.net.Uri
+
 
 class DownloadDialog(val url: String, val ownerName: String) : DialogFragment() {
     private lateinit var viewBinding: DownlaodDialogBinding
@@ -38,7 +50,7 @@ class DownloadDialog(val url: String, val ownerName: String) : DialogFragment() 
         return viewBinding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setOnClickListeners()
@@ -51,16 +63,17 @@ class DownloadDialog(val url: String, val ownerName: String) : DialogFragment() 
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
+
+
     private fun setOnClickListeners() {
         dialog?.setCancelable(false)
         viewBinding.tvWatchVideo.setOnClickListener {
             val myUid=125005
-            val encodedString: String = Base64.getEncoder().encodeToString(myUid.toString().toByteArray())
-            Log.d(TAG, "encoded value is $encodedString against $ownerName")
+            Log.d(TAG, "encoded value is $myUid against $ownerName")
             MyRewardedAds.showRewardedVideo(requireActivity(), requireContext())
             val mostDownloaded=MostDownloaded(url,ownerName)
-            insertDownloadedDataToFb(mostDownloaded,encodedString)
+            insertDownloadedDataToFb(mostDownloaded,myUid.toString())
 
             DownloadUtils.downloadFile(
                 url,
@@ -86,4 +99,6 @@ class DownloadDialog(val url: String, val ownerName: String) : DialogFragment() 
                 Log.d(TAG,"Error ${it.message}")
             }
     }
+
+
 }

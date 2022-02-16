@@ -4,7 +4,13 @@ import android.content.Context
 import android.widget.Toast
 
 import android.content.Intent
+import android.database.Cursor
+import android.net.Uri
 import com.rid.videosapp.dataClasses.TopCategories
+import android.provider.MediaStore
+
+
+
 
 
 class Utils {
@@ -12,6 +18,22 @@ class Utils {
         fun showToast(context: Context, msg: String) {
             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
         }
+        fun getRealPathFromUri(context: Context, contentUri: Uri?): String? {
+            var cursor: Cursor? = null
+            return try {
+                val proj = arrayOf(MediaStore.Video.Media.DATA)
+                cursor = context.contentResolver.query(contentUri!!, proj, null, null, null)
+                val column_index: Int =
+                    cursor!!.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.DATA)
+                cursor!!.moveToFirst()
+                cursor.getString(column_index)
+            } finally {
+                if (cursor != null) {
+                    cursor.close()
+                }
+            }
+        }
+
 
         fun shareImg(context: Context, url: String) {
             val intent = Intent()
