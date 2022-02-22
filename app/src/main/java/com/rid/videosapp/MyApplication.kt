@@ -40,7 +40,7 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks, Lif
   fun onMoveToForeground() {
     // Show the ad (if available) when the app moves to foreground.
     currentActivity?.let {
-      appOpenAdManager.showAdIfAvailable(it)
+
     }
   }
 

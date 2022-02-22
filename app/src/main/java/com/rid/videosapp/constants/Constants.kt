@@ -7,7 +7,7 @@ class Constants {
         const val DESTINATION_FOLDER = "Pixel Videos"
         const val BASE_URL_PIXABAY =
             "https://pixabay.com/api/videos/?key="
-        const val PAER_PAGE: Int = 50
+        const val PAER_PAGE: Int = 80
         const val BOUND = 3000
         const val CAHNNEL_ID = "MyChannel"
         const val request = 0

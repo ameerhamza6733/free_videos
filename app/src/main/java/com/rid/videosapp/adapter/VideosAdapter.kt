@@ -18,6 +18,7 @@ import com.rid.videosapp.fragments.PlayVideo
 import android.os.Bundle
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import com.bumptech.glide.request.RequestOptions
 import com.google.ads.mediation.admob.AdMobAdapter
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -96,9 +97,10 @@ class VideosAdapter(
         if ((position+1)%10==0) {
             holder as MyAdViewHolder
         } else {
-            val list = vidList[position]
+            val list = vidList[holder.adapterPosition]
             holder as MyViewHolder
             Glide.with(context)
+                .applyDefaultRequestOptions(RequestOptions().placeholder(R.drawable.ic_baseline_image_24))
                 .load(list.videoImage)
                 .into(holder.imgView)
         }

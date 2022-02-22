@@ -15,10 +15,10 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.rid.videosapp.constants.Constants
 
 class MyRewardedAds() {
-    companion object {
+
         val TAG = "MyRewardedAds"
-        private var mRewardedAd: RewardedAd? = null
-        const val AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
+         var mRewardedAd: RewardedAd? = null
+         val AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
         fun loadRewardedAd(context: Context) {
             Log.d(TAG,"add fun called")
             if (mRewardedAd == null) {
@@ -40,14 +40,13 @@ class MyRewardedAds() {
             }
         }
 
-        fun showRewardedVideo(activity: Activity, context: Context) {
+        fun setFullScreenContnt(activity: Activity) {
 
-            if (mRewardedAd != null) {
                 mRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
                     override fun onAdDismissedFullScreenContent() {
                         Log.d(TAG, "Ad was dismissed.")
                         mRewardedAd = null
-                        loadRewardedAd(context)
+                        loadRewardedAd(activity)
                     }
 
                     override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
@@ -61,17 +60,8 @@ class MyRewardedAds() {
                     }
                 }
 
-                mRewardedAd?.show(
-                    activity,
-                    OnUserEarnedRewardListener() {
-                        fun onUserEarnedReward(rewardItem: RewardItem) {
-                            var rewardAmount = rewardItem.amount
 
-                            Log.d("TAG", "User earned the reward.")
-                        }
-                    }
-                )
-            }
+
         }
-    }
+
 }

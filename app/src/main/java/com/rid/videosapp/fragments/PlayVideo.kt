@@ -3,6 +3,7 @@ package com.rid.videosapp.fragments
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.app.DownloadManager
+import android.app.WallpaperManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -10,25 +11,26 @@ import android.content.IntentFilter
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import androidx.fragment.app.Fragment
 import com.rid.videosapp.R
-import com.rid.videosapp.constants.Constants
-import java.io.File
-import java.lang.Exception
 import android.media.MediaPlayer.OnPreparedListener
 import android.view.*
 import android.widget.*
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.rid.videosapp.customeDialog.DownloadDialog
+import com.rid.videosapp.dataClasses.MostDownloaded
 import com.rid.videosapp.databinding.FragmentPlayVideoBinding
+import com.rid.videosapp.sharedViewModel.SharedViewModel
 import com.rid.videosapp.utils.*
 
 class PlayVideo : Fragment() {
-    private lateinit var bundle: Bundle
+    private  var bundle= Bundle()
+    private val myRewardedAds=MyRewardedAds()
+    private val shareViewMode by activityViewModels<SharedViewModel> ()
     var myUrl = ""
     var ownerName = ""
     var duration = 0
@@ -40,15 +42,12 @@ class PlayVideo : Fragment() {
     private lateinit var rootView: FragmentPlayVideoBinding
     private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
-            //Fetching the download id received with the broadcast
 
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             val  mDownloadManager = context!!
                 .getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val mostRecentDownload: Uri =
                 mDownloadManager.getUriForDownloadedFile(id)
-            Log.d(TAG,"wallaper downlaod ${mostRecentDownload.path} ${id}")
-            //Checking if the received broadcast is for our enqueued download by matching download id
             DownloadUtils.mVideoWallpaper.setToWallPaper(context,mostRecentDownload,false)
 
         }
@@ -68,7 +67,7 @@ class PlayVideo : Fragment() {
         // Inflate the layout for this fragment
         rootView = FragmentPlayVideoBinding.inflate(layoutInflater, container, false)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        MyRewardedAds.loadRewardedAd(requireContext())
+        myRewardedAds.loadRewardedAd(requireContext())
         return rootView.root
     }
 
@@ -77,7 +76,28 @@ class PlayVideo : Fragment() {
         gettingDataFromArguments()
         initialization()
         onClickListneres()
+        initObserver()
 
+    }
+
+    private fun initObserver(){
+        shareViewMode.liveDataShowRewardedVideoAd.observe(viewLifecycleOwner,{
+            if (it){
+                myRewardedAds.setFullScreenContnt(requireActivity())
+                myRewardedAds.mRewardedAd?.show(requireActivity()) {
+                    val mostDownloaded = MostDownloaded(myUrl, ownerName)
+
+                    WallpaperManager.getInstance(activity).clear()
+                    DownloadUtils.downloadFile(
+                        myUrl,
+                        DownloadUtils.RootDirectoryFB,
+                        requireContext(),
+                        ownerName + System.currentTimeMillis() + ".mp4"
+                    )
+                }
+
+            }
+        })
     }
 
     override fun onDetach() {
@@ -124,7 +144,7 @@ class PlayVideo : Fragment() {
     @SuppressLint("SetTextI18n")
     fun onClickListneres() {
         rootView.downloadId.setOnClickListener {
-            DownloadDialog(myUrl,ownerName).show(parentFragmentManager,TAG)
+            DownloadDialog().show(parentFragmentManager,TAG)
         }
 
         rootView.shareId.setOnClickListener {

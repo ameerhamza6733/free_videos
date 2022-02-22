@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 
 import android.content.Intent
+import android.content.res.Resources
 import android.database.Cursor
 import android.net.Uri
 import com.rid.videosapp.dataClasses.TopCategories
@@ -15,6 +16,15 @@ import android.provider.MediaStore
 
 class Utils {
     companion object {
+        fun getScreenWidth(): Int {
+            return Resources.getSystem().getDisplayMetrics().widthPixels
+        }
+
+        fun getScreenHeight(): Int {
+            return Resources.getSystem().getDisplayMetrics().heightPixels
+        }
+
+
         fun showToast(context: Context, msg: String) {
             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
         }

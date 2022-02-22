@@ -29,10 +29,15 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
 import android.net.Uri
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import com.rid.videosapp.sharedViewModel.SharedViewModel
 
 
-class DownloadDialog(val url: String, val ownerName: String) : DialogFragment() {
+class DownloadDialog() : DialogFragment() {
     private lateinit var viewBinding: DownlaodDialogBinding
+    private val sharedViewModel by activityViewModels<SharedViewModel> ()
+
     private val db = Firebase.firestore
     val TAG = "DownloadDialog"
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +51,7 @@ class DownloadDialog(val url: String, val ownerName: String) : DialogFragment() 
         savedInstanceState: Bundle?
     ): View? {
         viewBinding = DownlaodDialogBinding.inflate(layoutInflater, container, false)
-        MyRewardedAds.loadRewardedAd(requireContext())
+
         return viewBinding.root
     }
 
@@ -69,18 +74,9 @@ class DownloadDialog(val url: String, val ownerName: String) : DialogFragment() 
     private fun setOnClickListeners() {
         dialog?.setCancelable(false)
         viewBinding.tvWatchVideo.setOnClickListener {
-            val myUid=125005
-            Log.d(TAG, "encoded value is $myUid against $ownerName")
-            MyRewardedAds.showRewardedVideo(requireActivity(), requireContext())
-            val mostDownloaded=MostDownloaded(url,ownerName)
-            insertDownloadedDataToFb(mostDownloaded,myUid.toString())
 
-            DownloadUtils.downloadFile(
-                url,
-                DownloadUtils.RootDirectoryFB,
-                requireContext(),
-                ownerName + System.currentTimeMillis() + ".mp4"
-            )
+            sharedViewModel.liveDataShowRewardedVideoAd.value=true
+
             dialog?.dismiss()
         }
         viewBinding.tvDialogCancel.setOnClickListener {

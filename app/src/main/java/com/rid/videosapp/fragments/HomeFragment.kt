@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
@@ -43,6 +44,7 @@ class HomeFragment : Fragment() {
     var myVideosList = ArrayList<Video>()
     private lateinit var vidAdapter: VideosAdapter
     private lateinit var topCategoryAdapter:CategoriesAdapter
+    private var nextPageUrl:String=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
@@ -80,8 +82,11 @@ class HomeFragment : Fragment() {
             it.peekContent().let { resource ->
                 when (resource) {
                     is Resource.Error -> {
+                        bindView.pbBarId.visibility = View.INVISIBLE
                         if (resource.error?.isInternetError() == true) {
                             openBoottomSheet(requireContext())
+                        }else{
+                            Toast.makeText(activity,"error ${resource?.message}",Toast.LENGTH_LONG).show()
                         }
                     }
                     is Resource.Loading -> {

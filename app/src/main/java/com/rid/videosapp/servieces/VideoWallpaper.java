@@ -89,6 +89,7 @@ public class VideoWallpaper extends WallpaperService {
     public void setToWallPaper(Context context, Uri videoPath, boolean sound) {
 
 
+
         uri = videoPath;
         _sound = sound;
         path = Utils.Companion.getRealPathFromUri(context, uri);

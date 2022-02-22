@@ -9,6 +9,7 @@ import com.rid.videosapp.dataClasses.pixbay.PixabayMain
 import com.rid.videosapp.dataClasses.pixbay.VideoDetails
 import com.rid.videosapp.dataClasses.pixelVideo.response.VideoDetail
 import com.rid.videosapp.network.VideoRequest
+import com.rid.videosapp.utils.Utils
 import dev.sagar.lifescience.utils.Event
 import dev.sagar.lifescience.utils.Resource
 import okhttp3.ResponseBody
@@ -36,17 +37,36 @@ class PixelVideoRepo {
                 isNewData = false
                 val videoMainClass = response.body()
                 val gson=  GsonBuilder().setPrettyPrinting().create()
+                Log.d(TAG,"videoMainClass ${videoMainClass?.next_page.toString()}")
                 for (i in videoMainClass?.videos!!.indices) {
-                    Log.d(TAG,"videoMainClass ${gson.toJson(videoMainClass)}")
+                    var bestHight=0
+                    var bestHightVideoUrl= videoMainClass.videos[i].video_files[0].link
+                   videoMainClass.videos[i].video_files.forEach {
+
+                       Log.d(TAG,"video file hight ${it.height}")
+                       var hight= 0
+                       it.height?.let { it2->
+                           hight=it2.toInt()
+                       }
+                       if (hight<=Utils.getScreenHeight() && hight>bestHight){
+                          bestHight=hight
+                           bestHightVideoUrl=it.link
+                       }
+                   }
+                    Log.d(TAG,"best hight will ${bestHight} ${Utils.getScreenHeight()}")
+
                     val abc = Video(
                         videoMainClass.videos[i].user.name,
                         videoMainClass.videos[i].image,
-                        videoMainClass.videos[i].video_files[2].link,
+                       bestHightVideoUrl,
                         videoMainClass.videos[i].duration,
-                        videoMainClass.videos[i].id
+                        videoMainClass.videos[i].id,
+                        videoMainClass.total_results,
+                        videoMainClass.next_page,
+                        ""
                     )
                     videoGen.add(abc)
-                    Log.d(TAG,"picture is ${videoMainClass.videos[0].video_pictures[0].picture}")
+
 
                 }
 
@@ -87,7 +107,7 @@ class PixelVideoRepo {
                         resToMianPixaby.hits[i].videos.small.url,
                         resToMianPixaby.hits[i].duration,
                         resToMianPixaby.hits[i].downloads
-                    )
+                    ,0,"","")
                     videoGen.add(vidToSend)
                 }
                 Log.d(TAG,"data from Pixa size is ${videoGen.size}  $resToMianPixaby")

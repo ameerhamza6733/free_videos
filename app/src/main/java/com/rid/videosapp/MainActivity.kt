@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
        window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         createTimer(COUNTER_TIME)
+        startActivity()
 
 //        val notificationsFromFirestore=NotificationsFromFirestore()
 //        notificationsFromFirestore.getNotifications(this)
@@ -70,18 +71,19 @@ class MainActivity : AppCompatActivity() {
                     return
                 }
 
+
                 // Show the app open ad.
                 application.showAdIfAvailable(
                     this@MainActivity,
                     object : MyApplication.OnShowAdCompleteListener {
                         override fun onShowAdComplete() {
 
-                            startActivity()
+
                         }
                     })
             }
         }
-        countDownTimer?.start()
+
     }
     private fun startActivity(){
         val notificationIntent = intent.getStringExtra(CommonKeys.NOTIFICATION_URL)
