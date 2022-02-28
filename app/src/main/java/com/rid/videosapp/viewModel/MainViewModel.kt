@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rid.videosapp.constants.Constants
 import com.rid.videosapp.dataClasses.Video
+import com.rid.videosapp.dataClasses.Wallpapers
 import com.rid.videosapp.dataClasses.pixbay.PixabayMain
 import com.rid.videosapp.dataClasses.pixbay.VideoDetails
 import com.rid.videosapp.dataClasses.pixelVideo.response.VideoMainClass
@@ -22,9 +23,9 @@ class MainViewModel : ViewModel() {
     var queryToSearch = Constants.POPULAR_SEARCHES
     val TAG = "MainViewModel"
     private val pixelVideoRepo = PixelVideoRepo()
-    private val _pixelVideoMutableData: MutableLiveData<Event<Resource<ArrayList<Video>>>> =
+    private val _pixelVideoMutableData: MutableLiveData<Event<Resource<Wallpapers>>> =
         MutableLiveData()
-    val pixelVideoSearchLiveData: MutableLiveData<Event<Resource<ArrayList<Video>>>> =
+    val pixelVideoSearchLiveData: MutableLiveData<Event<Resource<Wallpapers>>> =
         _pixelVideoMutableData
 
     init {

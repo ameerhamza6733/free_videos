@@ -21,5 +21,7 @@ class CommonKeys {
         const val VID_PLAYING="video_play_successfully"
         const val INTERNET_ERROR="internet_error"
         const val RETRY_CLICKED="retry_clicked_for_video"
+        const val RC_NEW_WALLPAPER_NOTIFICATION="new_wallpaper_notification"
+        const val RC_TOP_CATEGORIES="top_categories"
     }
 }

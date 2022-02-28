@@ -4,18 +4,16 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdLoader
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.*
 import com.google.android.gms.ads.nativead.MediaView
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.rid.videosapp.R
+import java.util.*
 
 class MyNativeAds {
     companion object {
-        const val ADMOB_AD_UNIT_ID = "ca-app-pub-3940256099942544/2247696110"
+
         var currentNativeAd: NativeAd? = null
         private fun populateNativeAdView(nativeAd: NativeAd, adView: NativeAdView) {
 
@@ -77,8 +75,8 @@ class MyNativeAds {
             adView.setNativeAd(nativeAd)
         }
 
-        fun showNativeAds(context: Context, adView: NativeAdView, frameLayout: FrameLayout) {
-            val builder = AdLoader.Builder(context, ADMOB_AD_UNIT_ID)
+        fun showNativeAds(context: Context, adView: NativeAdView, frameLayout: FrameLayout,adId:String) {
+            val builder = AdLoader.Builder(context, adId)
             builder.forNativeAd { nativeAd ->
                 currentNativeAd?.destroy()
                 currentNativeAd = nativeAd
@@ -91,6 +89,7 @@ class MyNativeAds {
                     super.onAdFailedToLoad(p0)
                 }
             }).build()
+
             adLoader.loadAd(AdRequest.Builder().build())
         }
     }

@@ -10,15 +10,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.google.android.gms.ads.AdError
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.*
 import com.google.android.gms.ads.appopen.AppOpenAd
 import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback
 import com.rid.videosapp.constants.Constants
-import java.util.Date
+import java.util.*
 
 private const val AD_UNIT_ID = "ca-app-pub-3940256099942544/3419835294"
 private const val LOG_TAG = "AppOpenAdManager"
@@ -30,6 +26,9 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks, Lif
   override fun onCreate() {
     super.onCreate()
     registerActivityLifecycleCallbacks(this)
+   val requestConfiguration= RequestConfiguration.Builder().setTestDeviceIds(
+      Arrays.asList("246E5D30FD3684C5C7E7B8BE020B95A3")).build()
+    MobileAds.setRequestConfiguration(requestConfiguration);
     MobileAds.initialize(this) {}
     ProcessLifecycleOwner.get().lifecycle.addObserver(this)
     appOpenAdManager = AppOpenAdManager()

@@ -9,9 +9,11 @@ import android.database.Cursor
 import android.net.Uri
 import com.rid.videosapp.dataClasses.TopCategories
 import android.provider.MediaStore
-
-
-
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.gson.Gson
+import com.rid.videosapp.dataClasses.TopCategoriesArray
+import org.json.JSONObject
+import kotlin.math.log
 
 
 class Utils {
@@ -57,47 +59,16 @@ class Utils {
             context.startActivity(intent)
         }
 
-        fun addTopCategories(): ArrayList<TopCategories> {
+        fun addTopCategories(): List<TopCategories> {
 
-            val recList = ArrayList<TopCategories>()
+            val categoriesJson= FirebaseRemoteConfig.getInstance().getString(CommonKeys.RC_TOP_CATEGORIES).replace("^\"|\"$", "")
 
-            recList.add(
-                TopCategories(
-                    "Abstract ",
-                    "abstract",
-                    "https://images.pexels.com/photos/2179483/pexels-photo-2179483.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=80&w=140"
-                )
-            )
-            recList.add(
-                TopCategories(
-                    "Painting",
-                    "painting",
-                    "https://images.pexels.com/photos/102127/pexels-photo-102127.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=80&w=140"
+            val gson = Gson()
+            val array= gson.fromJson<TopCategoriesArray>(categoriesJson,TopCategoriesArray::class.java)
 
-                )
-            )
-            recList.add(
-                TopCategories(
-                    "Fantasy ",
-                    "fantasy ",
-                    "https://images.pexels.com/photos/3025620/pexels-photo-3025620.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=80&w=140"
-                )
-            )
-            recList.add(
-                TopCategories(
-                    "Retro",
-                    "retro",
-                    "https://images.pexels.com/photos/859895/pexels-photo-859895.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=80&w=140"
-                )
-            )
-            recList.add(
-                TopCategories(
-                    "Planet",
-                    "planet",
-                    "https://images.pexels.com/photos/586030/pexels-photo-586030.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=80&w=140"
-                )
-            )
-            return recList
+
+
+            return array.TopCategories
         }
 
     }

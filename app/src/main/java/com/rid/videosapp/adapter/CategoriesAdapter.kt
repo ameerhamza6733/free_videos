@@ -20,7 +20,7 @@ import com.rid.videosapp.fragments.HomeFragment
 import com.rid.videosapp.fragments.SearchVideos
 import com.rid.videosapp.utils.CommonKeys
 
-class CategoriesAdapter(val context: Context, val list: ArrayList<TopCategories>) :
+class CategoriesAdapter(val context: Context, val list: List<TopCategories>) :
     RecyclerView.Adapter<CategoriesAdapter.MyViewHolder>() {
 
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {

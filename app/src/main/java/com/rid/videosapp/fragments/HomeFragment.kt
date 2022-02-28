@@ -3,29 +3,22 @@ package com.rid.videosapp.fragments
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.rid.videosapp.adapter.VideosAdapter
 import com.rid.videosapp.constants.Constants
 import com.rid.videosapp.dataClasses.Video
 import com.rid.videosapp.viewModel.MainViewModel
 import dev.sagar.lifescience.utils.Resource
-import androidx.recyclerview.widget.RecyclerView
 import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.ads.nativead.NativeAdView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.rid.videosapp.R
@@ -97,7 +90,14 @@ class HomeFragment : Fragment() {
                         bindView.pbBarId.visibility = View.INVISIBLE
                         bindView.recViewMainId.visibility = View.VISIBLE
                         if (viewModel.isNewData) {
-                            myVideosList.addAll(resource.response)
+                            if (resource.response.nextPageUrl.isNullOrEmpty()){
+                               bindView.idBtnShowMore.visibility=View.INVISIBLE
+                            }else{
+                                bindView.idBtnShowMore.visibility=View.VISIBLE
+
+                            }
+
+                            myVideosList.addAll(resource.response.videos)
                             vidAdapter.notifyDataSetChanged()
                             viewModel.isNewData = false
                         }
@@ -115,17 +115,7 @@ class HomeFragment : Fragment() {
         gridLayoutManager =
             GridLayoutManager(requireContext(),2, GridLayoutManager.VERTICAL,false)
         bindView.recViewMainId.layoutManager = gridLayoutManager
-        bindView.recViewMainId.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    bindView.idBtnShowMore.visibility = View.VISIBLE
-                } else {
 
-                    bindView.idBtnShowMore.visibility = View.INVISIBLE
-                }
-            }
-        })
         bindView.recViewCategories.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         topCategoryAdapter= CategoriesAdapter(requireContext(),Utils.addTopCategories())

@@ -92,7 +92,7 @@ class SearchVideos : Fragment() {
                         bindView.pbBarId.visibility = View.INVISIBLE
                         bindView.recViewMainId.visibility = View.VISIBLE
                         if (viewModel.isNewData) {
-                            myList.addAll(resource.response)
+                            myList.addAll(resource.response.videos)
                             vidAdapter.notifyDataSetChanged()
                             viewModel.isNewData = false
                         }

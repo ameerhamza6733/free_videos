@@ -31,6 +31,9 @@ interface VideosInterface {
     ): Response<VideoMainClass>
 
     @GET
+    suspend fun getVideos(@Url url:String):Response<VideoMainClass>
+
+    @GET
     suspend fun getVideosFromPixabay(
         @Url url: String?,
         @Query("q") query: String,

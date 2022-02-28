@@ -19,7 +19,9 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.rid.videosapp.utils.Utils
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private var countDownTimer: CountDownTimer?=null
@@ -31,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
        window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         createTimer(COUNTER_TIME)
         startActivity()
@@ -108,18 +111,15 @@ class MainActivity : AppCompatActivity() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
-//        val uploadWorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
-//   .setConstraints(constraints)
-//            .build()
-        val saveRequest =
-            PeriodicWorkRequestBuilder<NotificationWorker>(15, TimeUnit.MINUTES)
-                .setConstraints(constraints)
-                .build()
+        val uploadWorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
+            .setInitialDelay(15,TimeUnit.DAYS)
+            .setConstraints(constraints)
+            .build()
+//        val saveRequest =
+//            PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.DAYS)
+//                .setConstraints(constraints)
+//                .build()
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "NotificationWorker",
-            ExistingPeriodicWorkPolicy.KEEP,
-            saveRequest
-        )
+        WorkManager.getInstance(this).enqueue(uploadWorkRequest)
     }
 }

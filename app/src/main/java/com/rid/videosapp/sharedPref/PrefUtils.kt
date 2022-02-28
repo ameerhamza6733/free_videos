@@ -1,4 +1,4 @@
-package com.example.task10driverapp.source.local.prefrance
+package com.rid.videosapp.sharedPref
 
 import android.content.Context
 import android.content.SharedPreferences

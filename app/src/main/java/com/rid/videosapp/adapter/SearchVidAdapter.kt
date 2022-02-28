@@ -60,7 +60,7 @@ class SearchVidAdapter(
             val fram=itemView.findViewById<FrameLayout>(R.id.ad_frame)
             val layoutAd =
                 LayoutInflater.from(context).inflate(R.layout.ad_unified, null) as NativeAdView
-            MyNativeAds.showNativeAds(context, layoutAd, fram)
+            MyNativeAds.showNativeAds(context, layoutAd, fram,context.getString(R.string.admob_native_add))
         }
 
     }

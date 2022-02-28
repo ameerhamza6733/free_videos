@@ -24,12 +24,14 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.rid.videosapp.customeDialog.DownloadDialog
 import com.rid.videosapp.dataClasses.MostDownloaded
 import com.rid.videosapp.databinding.FragmentPlayVideoBinding
+import com.rid.videosapp.servieces.VideoWallpaper
 import com.rid.videosapp.sharedViewModel.SharedViewModel
 import com.rid.videosapp.utils.*
 
 class PlayVideo : Fragment() {
     private  var bundle= Bundle()
     private val myRewardedAds=MyRewardedAds()
+    private var mediaPlayer:MediaPlayer?=null
     private val shareViewMode by activityViewModels<SharedViewModel> ()
     var myUrl = ""
     var ownerName = ""
@@ -48,7 +50,7 @@ class PlayVideo : Fragment() {
                 .getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val mostRecentDownload: Uri =
                 mDownloadManager.getUriForDownloadedFile(id)
-            DownloadUtils.mVideoWallpaper.setToWallPaper(context,mostRecentDownload,false)
+            VideoWallpaper.setToWallPaper(activity!!.applicationContext,mostRecentDownload,false)
 
         }
 
@@ -67,7 +69,7 @@ class PlayVideo : Fragment() {
         // Inflate the layout for this fragment
         rootView = FragmentPlayVideoBinding.inflate(layoutInflater, container, false)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        myRewardedAds.loadRewardedAd(requireContext())
+        myRewardedAds.loadRewardedAd(requireActivity(),getString(R.string.admob_video_ad))
         return rootView.root
     }
 
@@ -83,21 +85,28 @@ class PlayVideo : Fragment() {
     private fun initObserver(){
         shareViewMode.liveDataShowRewardedVideoAd.observe(viewLifecycleOwner,{
             if (it){
-                myRewardedAds.setFullScreenContnt(requireActivity())
+                myRewardedAds.setFullScreenContnt(requireActivity(),getString(R.string.admob_video_ad))
+               if (myRewardedAds.mRewardedAd==null){
+                   dowloadWallaper()
+               }
                 myRewardedAds.mRewardedAd?.show(requireActivity()) {
-                    val mostDownloaded = MostDownloaded(myUrl, ownerName)
-
-                    WallpaperManager.getInstance(activity).clear()
-                    DownloadUtils.downloadFile(
-                        myUrl,
-                        DownloadUtils.RootDirectoryFB,
-                        requireContext(),
-                        ownerName + System.currentTimeMillis() + ".mp4"
-                    )
+                   dowloadWallaper()
                 }
 
             }
         })
+    }
+
+    private fun dowloadWallaper(){
+        val mostDownloaded = MostDownloaded(myUrl, ownerName)
+
+        WallpaperManager.getInstance(activity).clear()
+        DownloadUtils.downloadFile(
+            myUrl,
+            DownloadUtils.RootDirectoryFB,
+            requireContext(),
+            ownerName + System.currentTimeMillis() + ".mp4"
+        )
     }
 
     override fun onDetach() {
@@ -107,12 +116,18 @@ class PlayVideo : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        rootView.exoplayerViewId.stopPlayback()
-    }
+        mediaPlayer?.pause()
 
-    override fun onStop() {
-        super.onStop()
-        rootView.exoplayerViewId.stopPlayback()
+    }
+    override fun onResume() {
+        super.onResume()
+
+       try {
+           mediaPlayer?.start()
+       }catch (e:Exception){
+           e.printStackTrace()
+       }
+
     }
 
     private fun gettingDataFromArguments() {
@@ -137,6 +152,7 @@ class PlayVideo : Fragment() {
 
 
     override fun onDestroy() {
+
         requireActivity(). unregisterReceiver(onDownloadComplete);
         super.onDestroy()
     }
@@ -167,10 +183,11 @@ class PlayVideo : Fragment() {
             }
         })
         rootView.exoplayerViewId.setOnPreparedListener(OnPreparedListener { mp ->
-            mp.start()
-            mp.setOnVideoSizeChangedListener { mp, arg1, arg2 -> // TODO Auto-generated method stub
-                mp.start()
-                mp.isLooping = true
+            mediaPlayer=mp
+            mediaPlayer?.start()
+            mediaPlayer?.setOnVideoSizeChangedListener { mp, arg1, arg2 -> // TODO Auto-generated method stub
+                mediaPlayer?.start()
+                mediaPlayer?.isLooping = true
                 dialog.dismiss()
             }
         })
@@ -231,6 +248,9 @@ class PlayVideo : Fragment() {
         if (dialog.isShowing) {
             dialog.dismiss()
         }
+        mediaPlayer?.pause()
+        mediaPlayer?.release()
+
         requireActivity().onBackPressed()
     }
 }

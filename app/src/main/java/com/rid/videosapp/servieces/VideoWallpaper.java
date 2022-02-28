@@ -30,11 +30,11 @@ public class VideoWallpaper extends WallpaperService {
     public static final String VIDEO_PARAMS_CONTROL_ACTION = "com.dingmouren.videowallpager";
     public static final String ACTION = "action";
     public static final int ACTION_VOICE_SILENCE = 0x101;
+    public static final int ACTION_SET_WALLAPER =6;
     public static final int ACTION_VOICE_NORMAL = 0x102;
     public static final String IS_SILENCE = "is_silence";
     private static final String TAG = VideoWallpaper.class.getName();
-    private static Uri uri;
-    private static String path;
+    private  static Uri path;
     private static boolean _sound = false;
     private FileInputStream inputStream;
 
@@ -63,6 +63,18 @@ public class VideoWallpaper extends WallpaperService {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.d(TAG,"Oncrtae");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG,"onStart Command");
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         Log.e(TAG,"onDestroy");
@@ -86,23 +98,25 @@ public class VideoWallpaper extends WallpaperService {
      *
      * @param context
      */
-    public void setToWallPaper(Context context, Uri videoPath, boolean sound) {
+    public static void setToWallPaper(Context context, Uri videoPath, boolean sound) {
 
-
-
-        uri = videoPath;
+        Log.d(TAG,"setToWallaper "+videoPath.getPath());
+        Intent setWallaperIntent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
+        setWallaperIntent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, new ComponentName(context, VideoWallpaper.class));
+        setWallaperIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(setWallaperIntent);
+        path = videoPath;
         _sound = sound;
-        path = Utils.Companion.getRealPathFromUri(context, uri);
 
-        Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
-        intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, new ComponentName(context, VideoWallpaper.class));
-        context.startActivity(intent);
+
+
     }
 
 
     @Override
     public Engine onCreateEngine() {
-        if (uri == null || TextUtils.isEmpty(uri.toString())) {
+        Log.d(TAG,"onCreateEngine "+path);
+        if (path == null || TextUtils.isEmpty(path.toString())) {
             Toast.makeText(VideoWallpaper.this, "Please select wallpaper first: ", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(VideoWallpaper.this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -114,14 +128,14 @@ public class VideoWallpaper extends WallpaperService {
         return new VideoWallpagerEngine();
     }
 
-    class VideoWallpagerEngine extends Engine {
+    class  VideoWallpagerEngine extends Engine {
         private MediaPlayer mMediaPlayer;
         private BroadcastReceiver mVideoVoiceControlReceiver;
 
         @Override
         public void onCreate(SurfaceHolder surfaceHolder) {
             super.onCreate(surfaceHolder);
-
+            Log.d(TAG,"onWallaper engine crate");
             IntentFilter intentFilter = new IntentFilter(VIDEO_PARAMS_CONTROL_ACTION);
             mVideoVoiceControlReceiver = new VideoVoiceControlReceiver();
             registerReceiver(mVideoVoiceControlReceiver, intentFilter);
@@ -129,24 +143,33 @@ public class VideoWallpaper extends WallpaperService {
 
         @Override
         public void onDestroy() {
+            Log.d(TAG,"onWallaper engine onDestroy");
             unregisterReceiver(mVideoVoiceControlReceiver);
             super.onDestroy();
         }
 
         @Override
         public void onVisibilityChanged(boolean visible) {
+            Log.d(TAG,"onVisibilityChanged "+visible);
             if (visible) {
                 if (mMediaPlayer != null) {
                     mMediaPlayer.start();
+                    Log.d(TAG,"start media player  ");
+                    Toast.makeText(getApplicationContext(), "start media player ", Toast.LENGTH_SHORT).show();
+
                 } else {
+                    Toast.makeText(getApplicationContext(), "media player is null", Toast.LENGTH_SHORT).show();
 
                 }
 
             } else {
                 if (mMediaPlayer != null) {
+                    Log.d(TAG,"stop media player ");
+                    Toast.makeText(getApplicationContext(), "stop media player ", Toast.LENGTH_SHORT).show();
+
                     mMediaPlayer.pause();
                 } else {
-
+                    Toast.makeText(getApplicationContext(), "stop media player error", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -155,17 +178,17 @@ public class VideoWallpaper extends WallpaperService {
         @Override
         public void onSurfaceCreated(SurfaceHolder holder) {
             super.onSurfaceCreated(holder);
-            if (uri == null || TextUtils.isEmpty(uri.toString())) {
-                stopSelf();
+            if (path == null || TextUtils.isEmpty(path.toString())) {
+
             } else {
-                Log.d(TAG, "" + uri.getPath());
+                Log.d(TAG, "" + path);
                 mMediaPlayer = new MediaPlayer();
                 mMediaPlayer.setSurface(holder.getSurface());
 
 
                 try {
 
-                    mMediaPlayer.setDataSource(VideoWallpaper.this,uri );
+                    mMediaPlayer.setDataSource(VideoWallpaper.this,path );
                     mMediaPlayer.setLooping(true);
                     if (_sound) {
                         mMediaPlayer.setVolume(1.0f, 1.0f);
@@ -178,10 +201,10 @@ public class VideoWallpaper extends WallpaperService {
                     mMediaPlayer.setLooping(true);
                 } catch (Exception e) {
 
-
+                    Log.d(TAG,"error "+e.getMessage());
                     Toast.makeText(VideoWallpaper.this, "Unable to load video file trying alternative method ", Toast.LENGTH_LONG).show();
 
-                    loadFileFromInputStream();
+
 
                     e.printStackTrace();
                 }
@@ -189,36 +212,7 @@ public class VideoWallpaper extends WallpaperService {
 
         }
 
-        private void loadFileFromInputStream() {
-            try {
-                inputStream = new FileInputStream(path);
 
-                mMediaPlayer.setDataSource(inputStream.getFD());
-                mMediaPlayer.setLooping(true);
-                if (_sound) {
-                    mMediaPlayer.setVolume(1.0f, 1.0f);
-                } else {
-                    mMediaPlayer.setVolume(0f, 0f);
-                }
-                mMediaPlayer.prepare();
-
-                mMediaPlayer.start();
-
-            } catch (Exception io) {
-
-                io.printStackTrace();
-
-                Toast.makeText(VideoWallpaper.this, "Unable to load video file ", Toast.LENGTH_LONG).show();
-                stopSelf();
-            } finally {
-
-                if (inputStream != null) try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
 
         @Override
         public void onSurfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -228,6 +222,7 @@ public class VideoWallpaper extends WallpaperService {
         @Override
         public void onSurfaceDestroyed(SurfaceHolder holder) {
             super.onSurfaceDestroyed(holder);
+            Log.d(TAG,"onSurfesDestry");
             if (mMediaPlayer != null) {
                 mMediaPlayer.release();
                 mMediaPlayer = null;
@@ -245,6 +240,10 @@ public class VideoWallpaper extends WallpaperService {
                         break;
                     case ACTION_VOICE_SILENCE:
                         mMediaPlayer.setVolume(0, 0);
+                        break;
+
+                    case  ACTION_SET_WALLAPER:
+
                         break;
                 }
             }

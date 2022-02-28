@@ -14,17 +14,18 @@ import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.rid.videosapp.constants.Constants
 
+
 class MyRewardedAds() {
 
         val TAG = "MyRewardedAds"
          var mRewardedAd: RewardedAd? = null
-         val AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
-        fun loadRewardedAd(context: Context) {
+
+        fun loadRewardedAd(context: Context,adId:String) {
             Log.d(TAG,"add fun called")
             if (mRewardedAd == null) {
                 val adRequest = AdRequest.Builder().build()
                 RewardedAd.load(
-                    context,AD_UNIT_ID, adRequest,
+                    context,adId, adRequest,
                     object : RewardedAdLoadCallback() {
                         override fun onAdFailedToLoad(adError: LoadAdError) {
                             Log.d(TAG, adError.message)
@@ -40,13 +41,13 @@ class MyRewardedAds() {
             }
         }
 
-        fun setFullScreenContnt(activity: Activity) {
+        fun setFullScreenContnt(context: Context,adId: String) {
 
                 mRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
                     override fun onAdDismissedFullScreenContent() {
                         Log.d(TAG, "Ad was dismissed.")
                         mRewardedAd = null
-                        loadRewardedAd(activity)
+                        loadRewardedAd(context,adId)
                     }
 
                     override fun onAdFailedToShowFullScreenContent(adError: AdError?) {

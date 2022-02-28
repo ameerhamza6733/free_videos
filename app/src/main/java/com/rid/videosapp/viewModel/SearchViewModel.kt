@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rid.videosapp.constants.Constants
 import com.rid.videosapp.dataClasses.Video
+import com.rid.videosapp.dataClasses.Wallpapers
 import com.rid.videosapp.repostroy.PixelVideoRepo
 import dev.sagar.lifescience.utils.Event
 import dev.sagar.lifescience.utils.Resource
@@ -18,9 +19,9 @@ class SearchViewModel(query: String) :ViewModel() {
     var queryToSearch = ""
     val TAG = "SearchViewModel"
     private val pixelVideoRepo = PixelVideoRepo()
-    private val _pixelVideoMutableData: MutableLiveData<Event<Resource<ArrayList<Video>>>> =
+    private val _pixelVideoMutableData: MutableLiveData<Event<Resource<Wallpapers>>> =
         MutableLiveData()
-    val pixelVideoSearchLiveData: MutableLiveData<Event<Resource<ArrayList<Video>>>> =
+    val pixelVideoSearchLiveData: MutableLiveData<Event<Resource<Wallpapers>>> =
         _pixelVideoMutableData
 
     init {

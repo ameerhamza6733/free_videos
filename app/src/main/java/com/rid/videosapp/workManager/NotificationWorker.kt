@@ -5,14 +5,13 @@ import android.os.Bundle
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.example.task10driverapp.source.local.prefrance.PrefUtils
+import com.rid.videosapp.sharedPref.PrefUtils
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.rid.videosapp.R
-import com.rid.videosapp.notification.CustomNotification
 import com.rid.videosapp.repostroy.NotificationsFromFirestore
 import com.rid.videosapp.utils.CommonKeys
 
@@ -33,6 +32,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
     }
 
     fun callNotification() {
+
         val notificationsFromFirestore = NotificationsFromFirestore()
         notificationsFromFirestore.getNotifications(applicationContext)
     }
@@ -51,15 +51,15 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
         remoteConfig.fetchAndActivate()
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-
-                    val oldKey=PrefUtils.getString(applicationContext,"newnot")
-                    val isNew = remoteConfig.getString("NotificationValue")
+                    Log.d(TAG,"new remote config ")
+                    val oldKey= PrefUtils.getString(applicationContext,"0")
+                    val isNew = remoteConfig.getString(CommonKeys.RC_NEW_WALLPAPER_NOTIFICATION)
 
                     if (isNew==oldKey){
                         Log.d(TAG,"remote key $isNew")
                     }else{
 
-                        PrefUtils.setString(applicationContext,"newnot",isNew)
+                        PrefUtils.setString(applicationContext,CommonKeys.RC_NEW_WALLPAPER_NOTIFICATION,isNew)
                         callNotification()
                         val bundle = Bundle()
                         val firebaseAnalytics = FirebaseAnalytics.getInstance(applicationContext)

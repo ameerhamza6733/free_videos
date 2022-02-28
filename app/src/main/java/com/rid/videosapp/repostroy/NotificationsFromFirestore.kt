@@ -18,6 +18,7 @@ class NotificationsFromFirestore {
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
+                    Log.d(TAG,"new notifaction from firebase")
                     val mydata = document.data
                     val tittle = mydata.getValue(CommonKeys.FB_TITTLE).toString()
                     val dec = mydata.getValue(CommonKeys.FB_DEC).toString()
