@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 
 object PrefUtils {
     private val PREF_NAME = "_Pref_"
+    val PREF_KEY_VIDEO_LOCATION="video_path"
 
     private fun getPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)

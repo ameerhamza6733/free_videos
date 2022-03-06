@@ -24,6 +24,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.rid.videosapp.dataClasses.NewWallpaperNotification
 import com.rid.videosapp.utils.CommonKeys
 
 
@@ -34,15 +35,11 @@ class CustomNotification {
         @SuppressLint("ResourceAsColor")
         fun requestForNotification(
             context: Context,
-            tittle: String,
-            body: String,
-            dec: String,
-            imgUrl: String,
-            vidUrl: String
+            newWallpaperNotification: NewWallpaperNotification
         ) {
             Glide.with(context)
                 .asBitmap()
-                .load(imgUrl)
+                .load(newWallpaperNotification.image)
                 .into(object : CustomTarget<Bitmap>() {
 
                     override fun onLoadCleared(placeholder: Drawable?) {
@@ -52,7 +49,7 @@ class CustomNotification {
                         resource: Bitmap,
                         transition: Transition<in Bitmap>?
                     ) {
-                        triggerNotificationToShow(context, tittle, body, dec, resource, vidUrl)
+                        triggerNotificationToShow(context, newWallpaperNotification.title, newWallpaperNotification.body, resource, newWallpaperNotification.wallpaper)
 
                     }
                 })
@@ -62,7 +59,6 @@ class CustomNotification {
             context: Context,
             tittle: String,
             body: String,
-            dec: String,
             imgBitmap: Bitmap,
             vidUrl: String
         ) {
@@ -84,8 +80,7 @@ class CustomNotification {
                 }else{
                     notificationLayout.setViewVisibility(R.id.imageView3, View.VISIBLE)
                 }
-                notificationLayout.setTextViewText(R.id.tv_notify_tittle_id, tittle)
-                notificationLayout.setTextViewText(R.id.tv_notify_tittle_two, dec)
+                notificationLayout.setTextViewText(R.id.tv_notify_tittle_two, tittle)
                 notificationLayout.setTextViewText(R.id.tv_notify_body, body)
                 notificationLayout.setImageViewBitmap(R.id.iv_notify_main_iv, imgBitmap)
 
@@ -98,7 +93,7 @@ class CustomNotification {
                     .setSmallIcon(R.drawable.videocam_24)
                     .setCustomContentView(notificationLayout)
                     .setCustomBigContentView(notificationLayout)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setPriority(NotificationCompat.PRIORITY_LOW)
                     .setContentIntent(pendingIntent)
                 notificationManager.notify(notificationID, notificationBuilder.build())
             } catch (e: Exception) {
@@ -115,12 +110,11 @@ class CustomNotification {
                 NotificationChannel(
                     Constants.CAHNNEL_ID,
                     Constants.NEWMATCH,
-                    NotificationManager.IMPORTANCE_HIGH
+                    NotificationManager.IMPORTANCE_LOW
                 )
             adminChannel.description = Constants.DEC
             adminChannel.enableLights(true)
             adminChannel.lightColor = Color.RED
-            adminChannel.enableVibration(true)
             notificationManager?.createNotificationChannel(adminChannel)
         }
 

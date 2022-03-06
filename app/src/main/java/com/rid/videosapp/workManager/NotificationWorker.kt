@@ -11,7 +11,10 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import com.google.gson.Gson
 import com.rid.videosapp.R
+import com.rid.videosapp.dataClasses.NewWallpaperNotification
+import com.rid.videosapp.notification.CustomNotification
 import com.rid.videosapp.repostroy.NotificationsFromFirestore
 import com.rid.videosapp.utils.CommonKeys
 
@@ -31,10 +34,12 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
         }
     }
 
-    fun callNotification() {
+    fun callNotification(newWallpaperNotification: NewWallpaperNotification) {
 
-        val notificationsFromFirestore = NotificationsFromFirestore()
-        notificationsFromFirestore.getNotifications(applicationContext)
+        CustomNotification.requestForNotification(
+            applicationContext,
+           newWallpaperNotification
+        )
     }
 
 
@@ -52,15 +57,17 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     Log.d(TAG,"new remote config ")
-                    val oldKey= PrefUtils.getString(applicationContext,"0")
+                    val oldKey= PrefUtils.getString(applicationContext,CommonKeys.RC_NEW_WALLPAPER_NOTIFICATION)
                     val isNew = remoteConfig.getString(CommonKeys.RC_NEW_WALLPAPER_NOTIFICATION)
 
-                    if (isNew==oldKey){
+                    if (false){
                         Log.d(TAG,"remote key $isNew")
                     }else{
+                        val gson=Gson()
+                        val newWallpaperNotification= gson.fromJson<NewWallpaperNotification>(isNew,NewWallpaperNotification::class.java)
 
                         PrefUtils.setString(applicationContext,CommonKeys.RC_NEW_WALLPAPER_NOTIFICATION,isNew)
-                        callNotification()
+                        callNotification(newWallpaperNotification)
                         val bundle = Bundle()
                         val firebaseAnalytics = FirebaseAnalytics.getInstance(applicationContext)
                         bundle.putString(CommonKeys.LOG_EVENT, "new notification against key $isNew")

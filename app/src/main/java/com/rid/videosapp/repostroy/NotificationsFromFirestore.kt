@@ -25,14 +25,7 @@ class NotificationsFromFirestore {
                     val body = mydata.getValue(CommonKeys.FB_BODY).toString()
                     val imgUrl = mydata.getValue(CommonKeys.FB_IMG_URL).toString()
                     val vidUrl = mydata.getValue(CommonKeys.FB_VID_URL).toString()
-                    CustomNotification.requestForNotification(
-                        context,
-                        tittle,
-                        body,
-                        dec,
-                        imgUrl,
-                        vidUrl
-                    )
+
                 }
             }
             .addOnFailureListener {

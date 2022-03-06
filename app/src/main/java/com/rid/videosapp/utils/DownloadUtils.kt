@@ -22,14 +22,14 @@ companion object {
     private var isProgressCheckerRunning = false
 
     var mVideoWallpaper = VideoWallpaper()
-    val RootDirectoryFBShow =
-        File(Environment.getDownloadCacheDirectory().toString() + "/Download/My Videos")
+
+
     val RootDirectoryFB = "/My Videos/"
 
     @SuppressLint("ObsoleteSdkInt")
     fun downloadFile(
         downloadPath: String?,
-        destinationPath: String,
+        destinationPath: File,
         context: Context,
         FileName: String
     ) {
@@ -39,9 +39,8 @@ companion object {
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED) // This will show notification on top when downloading the file.
         request.setTitle(FileName + "") // Title for notification.
         request.setVisibleInDownloadsUi(true)
-        request.setDestinationInExternalPublicDir(
-            Environment.DIRECTORY_DOWNLOADS,
-            destinationPath + FileName
+        request.setDestinationInExternalFilesDir(
+           context,Environment.DIRECTORY_DOWNLOADS,"wallpaper.mp4"
         ) // Storage directory path
         (context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager).enqueue(request) // This will start downloading
         try {

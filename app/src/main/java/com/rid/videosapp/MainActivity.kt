@@ -14,12 +14,16 @@ import android.content.ComponentName
 import android.content.Intent
 import android.os.Build
 import android.os.CountDownTimer
+import android.os.Debug
 import android.util.Log
 import android.view.Window
 import android.view.WindowManager
 import android.widget.TextView
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.rid.videosapp.utils.Utils
 import java.util.*
 
@@ -108,11 +112,21 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        val remoteConfig = Firebase.remoteConfig
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 3600
+        }
+        if (BuildConfig.DEBUG){
+            remoteConfig.setConfigSettingsAsync(configSettings)
+
+        }
+        remoteConfig.setDefaultsAsync(R.xml.remote_config_default_key)
+
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
         val uploadWorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
-            .setInitialDelay(15,TimeUnit.DAYS)
+            .setInitialDelay(30,TimeUnit.SECONDS)
             .setConstraints(constraints)
             .build()
 //        val saveRequest =

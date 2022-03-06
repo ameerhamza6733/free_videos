@@ -4,35 +4,39 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.app.DownloadManager
 import android.app.WallpaperManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.media.MediaPlayer
+import android.media.MediaPlayer.OnPreparedListener
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
-import com.rid.videosapp.R
-import android.media.MediaPlayer.OnPreparedListener
 import android.view.*
-import android.widget.*
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import androidx.fragment.app.viewModels
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.rid.videosapp.R
 import com.rid.videosapp.customeDialog.DownloadDialog
 import com.rid.videosapp.dataClasses.MostDownloaded
 import com.rid.videosapp.databinding.FragmentPlayVideoBinding
 import com.rid.videosapp.servieces.VideoWallpaper
 import com.rid.videosapp.sharedViewModel.SharedViewModel
-import com.rid.videosapp.utils.*
+import com.rid.videosapp.utils.CommonKeys
+import com.rid.videosapp.utils.DownloadUtils
+import com.rid.videosapp.utils.MyRewardedAds
+import com.rid.videosapp.utils.Utils
+import com.rid.videosapp.viewModel.FileUtilViewModel
+import dev.sagar.lifescience.utils.Resource
 
 class PlayVideo : Fragment() {
     private  var bundle= Bundle()
     private val myRewardedAds=MyRewardedAds()
     private var mediaPlayer:MediaPlayer?=null
     private val shareViewMode by activityViewModels<SharedViewModel> ()
+    private val fileViewModel by viewModels<FileUtilViewModel> ()
     var myUrl = ""
     var ownerName = ""
     var duration = 0
@@ -48,10 +52,8 @@ class PlayVideo : Fragment() {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             val  mDownloadManager = context!!
                 .getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            val mostRecentDownload: Uri =
-                mDownloadManager.getUriForDownloadedFile(id)
-            VideoWallpaper.setToWallPaper(activity!!.applicationContext,mostRecentDownload,false)
-
+            val mostRecentDownload: Uri = mDownloadManager.getUriForDownloadedFile(id)
+            fileViewModel.renameFile("wallpaper.mp4","currentWallpaper.mp4")
         }
 
 
@@ -82,19 +84,50 @@ class PlayVideo : Fragment() {
 
     }
 
+    fun setToWallPaper(context: Context) {
+        try {
+            WallpaperManager.getInstance(context).clear()
+        } catch (e: java.lang.Exception) {
+        }
+        val setWallaperIntent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
+        setWallaperIntent.putExtra(
+            WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, ComponentName(
+                context,
+                VideoWallpaper::class.java
+            )
+        )
+        setWallaperIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(setWallaperIntent)
+    }
+
+
     private fun initObserver(){
-        shareViewMode.liveDataShowRewardedVideoAd.observe(viewLifecycleOwner,{
-            if (it){
-                myRewardedAds.setFullScreenContnt(requireActivity(),getString(R.string.admob_video_ad))
-               if (myRewardedAds.mRewardedAd==null){
-                   dowloadWallaper()
-               }
+        fileViewModel.liveDataReanmeFile.observe(viewLifecycleOwner){
+            when(it){
+              is Resource.Success->{
+                 setToWallPaper(requireContext())
+              }
+                is Resource.Error->{
+                    Toast.makeText(requireActivity(),"Error ${it.error}",Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        shareViewMode.liveDataShowRewardedVideoAd.observe(viewLifecycleOwner) {
+
+            if (it) {
+                myRewardedAds.setFullScreenContnt(
+                    requireActivity(),
+                    getString(R.string.admob_video_ad)
+                )
+                if (myRewardedAds.mRewardedAd == null) {
+                    dowloadWallaper()
+                }
                 myRewardedAds.mRewardedAd?.show(requireActivity()) {
-                   dowloadWallaper()
+                    dowloadWallaper()
                 }
 
             }
-        })
+        }
     }
 
     private fun dowloadWallaper(){
@@ -103,9 +136,9 @@ class PlayVideo : Fragment() {
         WallpaperManager.getInstance(activity).clear()
         DownloadUtils.downloadFile(
             myUrl,
-            DownloadUtils.RootDirectoryFB,
+            requireActivity()!!.filesDir,
             requireContext(),
-            ownerName + System.currentTimeMillis() + ".mp4"
+            ownerName
         )
     }
 
@@ -160,6 +193,7 @@ class PlayVideo : Fragment() {
     @SuppressLint("SetTextI18n")
     fun onClickListneres() {
         rootView.downloadId.setOnClickListener {
+
             DownloadDialog().show(parentFragmentManager,TAG)
         }
 

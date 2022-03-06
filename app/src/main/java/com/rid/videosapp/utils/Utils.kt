@@ -66,9 +66,8 @@ class Utils {
             val gson = Gson()
             val array= gson.fromJson<TopCategoriesArray>(categoriesJson,TopCategoriesArray::class.java)
 
-
-
             return array.TopCategories
+
         }
 
     }
