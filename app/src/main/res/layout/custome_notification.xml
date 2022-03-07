@@ -6,6 +6,7 @@
     android:layout_height="80dp">
 
     <ImageView
+
         android:visibility="gone"
         android:id="@+id/iv_notify_app_icon"
         android:layout_width="wrap_content"

@@ -23,5 +23,6 @@ class CommonKeys {
         const val RETRY_CLICKED="retry_clicked_for_video"
         const val RC_NEW_WALLPAPER_NOTIFICATION="new_wallpaper_notification"
         const val RC_TOP_CATEGORIES="top_categories"
+        const val NEW_NOTIFICATION_WALLPAPER_PEXELS_PROVIDER="pexels.com"
     }
 }

@@ -17,6 +17,7 @@ import com.rid.videosapp.dataClasses.NewWallpaperNotification
 import com.rid.videosapp.notification.CustomNotification
 import com.rid.videosapp.repostroy.NotificationsFromFirestore
 import com.rid.videosapp.utils.CommonKeys
+import com.rid.videosapp.utils.Utils
 
 class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
@@ -65,14 +66,32 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
                     }else{
                         val gson=Gson()
                         val newWallpaperNotification= gson.fromJson<NewWallpaperNotification>(isNew,NewWallpaperNotification::class.java)
+                        if (newWallpaperNotification.wallpaperProvider.equals(CommonKeys.NEW_NOTIFICATION_WALLPAPER_PEXELS_PROVIDER)){
 
-                        PrefUtils.setString(applicationContext,CommonKeys.RC_NEW_WALLPAPER_NOTIFICATION,isNew)
-                        callNotification(newWallpaperNotification)
-                        val bundle = Bundle()
-                        val firebaseAnalytics = FirebaseAnalytics.getInstance(applicationContext)
-                        bundle.putString(CommonKeys.LOG_EVENT, "new notification against key $isNew")
-                        firebaseAnalytics.logEvent(CommonKeys.NEW_NOTIFICAION, bundle)
-                        Log.d(TAG,"remote key is else $isNew")
+                            var bestHight=0
+                            var bestHightVideoUrl= newWallpaperNotification.video_files[0].link
+                            newWallpaperNotification.video_files.forEach {
+
+                                Log.d(TAG,"video file hight ${it.height}")
+                                var hight= 0
+                                it.height?.let { it2->
+                                    hight=it2.toInt()
+                                }
+                                if (hight<= Utils.getScreenHeight() && hight>bestHight){
+                                    bestHight=hight
+                                    bestHightVideoUrl=it.link
+                                }
+
+                            }
+                            newWallpaperNotification.wallpaper=bestHightVideoUrl
+                            PrefUtils.setString(applicationContext,CommonKeys.RC_NEW_WALLPAPER_NOTIFICATION,isNew)
+                            callNotification(newWallpaperNotification)
+                            val bundle = Bundle()
+                            val firebaseAnalytics = FirebaseAnalytics.getInstance(applicationContext)
+                            bundle.putString(CommonKeys.LOG_EVENT, "new notification against key $isNew")
+                            firebaseAnalytics.logEvent(CommonKeys.NEW_NOTIFICAION, bundle)
+                            Log.d(TAG,"remote key is else $isNew")
+                        }
                     }
 
                 } else {

@@ -26,6 +26,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.rid.videosapp.dataClasses.NewWallpaperNotification
 import com.rid.videosapp.utils.CommonKeys
+import com.rid.videosapp.utils.RotateTransformation
 
 
 class CustomNotification {
@@ -40,6 +41,7 @@ class CustomNotification {
             Glide.with(context)
                 .asBitmap()
                 .load(newWallpaperNotification.image)
+                .transform(RotateTransformation(context,90f))
                 .into(object : CustomTarget<Bitmap>() {
 
                     override fun onLoadCleared(placeholder: Drawable?) {
