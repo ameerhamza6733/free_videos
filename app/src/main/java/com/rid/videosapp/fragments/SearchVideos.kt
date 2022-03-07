@@ -3,20 +3,21 @@ package com.rid.videosapp.fragments
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.app.myapplication.room.DataBaseModule
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.rid.videosapp.R
@@ -24,18 +25,19 @@ import com.rid.videosapp.adapter.SearchVidAdapter
 import com.rid.videosapp.constants.Constants
 import com.rid.videosapp.dataClasses.Video
 import com.rid.videosapp.databinding.FragmentSearchVideosBinding
+import com.rid.videosapp.repostroy.SearchRepo
 import com.rid.videosapp.utils.CommonKeys
 import com.rid.videosapp.utils.Utils
 import com.rid.videosapp.utils.isInternetError
 import com.rid.videosapp.viewModel.SearchViewModel
-import com.rid.videosapp.viewModel.ViewModelFactory
 import dev.sagar.lifescience.utils.Resource
 
 class SearchVideos : Fragment() {
     private lateinit var bindView: FragmentSearchVideosBinding
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel by viewModels<SearchViewModel> ()
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var staggeredGridLayoutManager: GridLayoutManager
+    private lateinit var searchRepo: SearchRepo
     val TAG = "SearchVideos"
     var queryToSend = ""
     private lateinit var bundle: Bundle
@@ -44,9 +46,8 @@ class SearchVideos : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         queryToSend = arguments?.get(Constants.QUERY_KEY).toString()
-        viewModel =
-            ViewModelProvider(this, ViewModelFactory(queryToSend)).get(SearchViewModel::class.java)
-    }
+       viewModel.getPixelVideos(queryToSend)
+         }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,7 +66,7 @@ class SearchVideos : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.queryToSearch = queryToSend
+           viewModel.queryToSearch = queryToSend
         bindView.customTbId.searchViewTbId.setQuery(viewModel.queryToSearch, false)
         initialization()
         callingAndObservingViewModel()
@@ -76,18 +77,31 @@ class SearchVideos : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun callingAndObservingViewModel() {
-        viewModel.pixelVideoSearchLiveData.observe(viewLifecycleOwner, {
+        viewModel.searchHistoryLiveData.observe(viewLifecycleOwner,{
+
+        })
+        viewModel.pixelVideoSearchLiveData.observe(viewLifecycleOwner) {
             it.peekContent().let { resource ->
                 when (resource) {
                     is Resource.Error -> {
+                        bindView.pbBarId.visibility = View.INVISIBLE
+                        bindView.pbHorizontalId.visibility = View.INVISIBLE
                         if (resource.error?.isInternetError() == true) {
                             openNetworkErrorBottomSheet(requireContext())
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "${resource.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                     is Resource.Loading -> {
+                        bindView.customTbId.searchViewTbId.setQuery(viewModel.queryToSearch,false)
                         bindView.pbBarId.visibility = View.VISIBLE
                     }
                     is Resource.Success -> {
+                        viewModel.saveSearchQuery(searchRepo)
                         bindView.pbHorizontalId.visibility = View.INVISIBLE
                         bindView.pbBarId.visibility = View.INVISIBLE
                         bindView.recViewMainId.visibility = View.VISIBLE
@@ -99,10 +113,12 @@ class SearchVideos : Fragment() {
                     }
                 }
             }
-        })
+        }
     }
 
     private fun initialization() {
+        searchRepo= SearchRepo(DataBaseModule.getDatabase(requireActivity().applicationContext).Dao())
+
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         bundle = Bundle()
         staggeredGridLayoutManager =
@@ -119,6 +135,7 @@ class SearchVideos : Fragment() {
                 }
             }
         })
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -137,6 +154,7 @@ class SearchVideos : Fragment() {
             @SuppressLint("NotifyDataSetChanged")
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
+
                     bundle.putString(CommonKeys.LOG_EVENT,"searched query from SearchVidoe "+query)
                     firebaseAnalytics.logEvent(CommonKeys.SEARCHED_CLICKED,bundle)
 
@@ -165,16 +183,16 @@ class SearchVideos : Fragment() {
         }
     }
 
-    private fun callViewModel(query: String, page: Int, per_page: Int) {
-        viewModel.getPixelVideos(query, page, per_page)
-        viewModel.page++
+    private fun callViewModel(query: String) {
+        viewModel.getPixelVideos(query)
+
     }
 
     private fun requestForNewData() {
         bindView.pbHorizontalId.visibility = View.VISIBLE
         viewModel.isNewData = true
-        callViewModel(viewModel.queryToSearch, viewModel.page, Constants.PAER_PAGE)
-        viewModel.page++
+        callViewModel(viewModel.queryToSearch)
+
     }
 
     private fun openNetworkErrorBottomSheet(context: Context) {
@@ -185,9 +203,7 @@ class SearchVideos : Fragment() {
         val button = bottomView.findViewById<Button>(R.id.btRetry)
         button.setOnClickListener {
             callViewModel(
-                viewModel.queryToSearch,
-                viewModel.page,
-                Constants.PAER_PAGE
+                viewModel.queryToSearch
             )
             bottomSheetDialog.dismiss()
         }

@@ -10,37 +10,40 @@ import androidx.lifecycle.ViewModelProvider
 import com.rid.videosapp.adapter.VideosAdapter
 import com.rid.videosapp.constants.Constants
 import com.rid.videosapp.dataClasses.Video
-import com.rid.videosapp.viewModel.MainViewModel
 import dev.sagar.lifescience.utils.Resource
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.app.myapplication.room.DataBaseModule
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.rid.videosapp.R
 import com.rid.videosapp.adapter.CategoriesAdapter
 import com.rid.videosapp.databinding.FragmentHomeBinding
+import com.rid.videosapp.repostroy.SearchRepo
 import com.rid.videosapp.utils.*
+import com.rid.videosapp.viewModel.SearchViewModel
 
 
 class HomeFragment : Fragment() {
+    private lateinit var searchRepo: SearchRepo
     private lateinit var bundle: Bundle
     private lateinit var bindView: FragmentHomeBinding
-    private lateinit var viewModel: MainViewModel
+    private val searchViewModel by viewModels<SearchViewModel>()
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var gridLayoutManager: GridLayoutManager
     val TAG = "HomeFragment"
     var myVideosList = ArrayList<Video>()
     private lateinit var vidAdapter: VideosAdapter
-    private lateinit var topCategoryAdapter:CategoriesAdapter
-    private var nextPageUrl:String=""
+    private lateinit var topCategoryAdapter: CategoriesAdapter
+    private var nextPageUrl: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
         videoFromNotification()
     }
 
@@ -54,7 +57,7 @@ class HomeFragment : Fragment() {
 //        requireActivity().window.setFlags(
 //            WindowManager.LayoutParams.FLAG_FULLSCREEN,
 //            WindowManager.LayoutParams.FLAG_FULLSCREEN
-   //     )
+        //     )
         initialization()
         callingAndObservingViewModel()
         onClickListeners()
@@ -71,55 +74,66 @@ class HomeFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun callingAndObservingViewModel() {
-        viewModel.pixelVideoSearchLiveData.observe(viewLifecycleOwner, {
+        searchViewModel.searchHistoryLastItem(searchRepo)
+        searchViewModel.pixelVideoSearchLiveData.observe(viewLifecycleOwner) {
             it.peekContent().let { resource ->
                 when (resource) {
                     is Resource.Error -> {
                         bindView.pbBarId.visibility = View.INVISIBLE
+                        bindView.pbHorizontalId.visibility = View.INVISIBLE
+
                         if (resource.error?.isInternetError() == true) {
                             openBoottomSheet(requireContext())
-                        }else{
-                            Toast.makeText(activity,"error ${resource?.message}",Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(
+                                activity,
+                                "error ${resource?.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                     is Resource.Loading -> {
+                        bindView.customTbId.searchViewTbId.setQuery(searchViewModel.queryToSearch,false)
                         bindView.pbBarId.visibility = View.VISIBLE
+
                     }
                     is Resource.Success -> {
                         bindView.pbHorizontalId.visibility = View.INVISIBLE
                         bindView.pbBarId.visibility = View.INVISIBLE
                         bindView.recViewMainId.visibility = View.VISIBLE
-                        if (viewModel.isNewData) {
-                            if (resource.response.nextPageUrl.isNullOrEmpty()){
-                               bindView.idBtnShowMore.visibility=View.INVISIBLE
-                            }else{
-                                bindView.idBtnShowMore.visibility=View.VISIBLE
+                        searchViewModel.saveSearchQuery(searchRepo)
+                        if (searchViewModel.isNewData) {
+                            if (resource.response.nextPageUrl.isNullOrEmpty()) {
+                                bindView.idBtnShowMore.visibility = View.INVISIBLE
+                            } else {
+                                bindView.idBtnShowMore.visibility = View.VISIBLE
 
                             }
 
                             myVideosList.addAll(resource.response.videos)
                             vidAdapter.notifyDataSetChanged()
-                            viewModel.isNewData = false
+                            searchViewModel.isNewData = false
                         }
                     }
                 }
             }
-        })
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initialization() {
 
+        searchRepo = SearchRepo(DataBaseModule.getDatabase(requireActivity().applicationContext).Dao())
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         gridLayoutManager =
-            GridLayoutManager(requireContext(),2, GridLayoutManager.VERTICAL,false)
+            GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         bindView.recViewMainId.layoutManager = gridLayoutManager
 
         bindView.recViewCategories.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        topCategoryAdapter= CategoriesAdapter(requireContext(),Utils.addTopCategories())
-        bindView.recViewCategories.adapter=topCategoryAdapter
+        topCategoryAdapter = CategoriesAdapter(requireContext(), Utils.addTopCategories())
+        bindView.recViewCategories.adapter = topCategoryAdapter
         topCategoryAdapter.notifyDataSetChanged()
 
     }
@@ -148,8 +162,12 @@ class HomeFragment : Fragment() {
             @SuppressLint("NotifyDataSetChanged")
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
-                    bundle.putString(CommonKeys.LOG_EVENT,"searched query from HomeFragment "+query)
-                    firebaseAnalytics.logEvent(CommonKeys.SEARCHED_CLICKED,bundle)
+
+                    bundle.putString(
+                        CommonKeys.LOG_EVENT,
+                        "searched query from HomeFragment " + query
+                    )
+                    firebaseAnalytics.logEvent(CommonKeys.SEARCHED_CLICKED, bundle)
                     val fm: FragmentManager = (context as AppCompatActivity).supportFragmentManager
                     bundle.putString(Constants.QUERY_KEY, query)
                     val searchVideos = SearchVideos()
@@ -173,16 +191,15 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun callViewModel(query: String, page: Int, per_page: Int) {
-        viewModel.getPixelVideos(query, page, per_page)
-        viewModel.page++
+    private fun callViewModel(query: String) {
+        searchViewModel.getPixelVideos(query)
+
     }
 
     fun requestForNewData() {
         bindView.pbHorizontalId.visibility = View.VISIBLE
-        viewModel.isNewData = true
-        callViewModel(viewModel.queryToSearch, viewModel.page, Constants.PAER_PAGE)
-        viewModel.page++
+        searchViewModel.isNewData = true
+        searchViewModel.getPixelVideos(searchViewModel.queryToSearch)
     }
 
     fun openBoottomSheet(context: Context) {
@@ -193,9 +210,7 @@ class HomeFragment : Fragment() {
         val button = bottomView.findViewById<Button>(R.id.btRetry)
         button.setOnClickListener {
             callViewModel(
-                viewModel.queryToSearch,
-                viewModel.page,
-                Constants.PAER_PAGE
+                searchViewModel.queryToSearch
             )
             bottomSheetDialog.dismiss()
         }

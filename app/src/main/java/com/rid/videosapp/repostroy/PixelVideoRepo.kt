@@ -37,7 +37,10 @@ class PixelVideoRepo {
                 isNewData = false
                 val videoMainClass = response.body()
                 val listOfVideos=  arrayListOf<Video>()
-                Log.d(TAG,"videoMainClass ${videoMainClass?.next_page.toString()}")
+
+                if (videoMainClass?.total_results==0){
+                    return Event(Resource.Error(null,"No Wallpaper found for $query"))
+                }
                 for (i in videoMainClass?.videos!!.indices) {
                     var bestHight=0
                     var bestHightVideoUrl= videoMainClass.videos[i].video_files[0].link
