@@ -77,14 +77,12 @@ class CustomNotification {
                     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 val notificationID = Random().nextInt(Constants.BOUND)
                 notificationManager.cancelAll()
-                if (vidUrl.contains("jpeg") || vidUrl.contains("jpg") || vidUrl.contains("png")) {
-                    notificationLayout.setViewVisibility(R.id.imageView3, View.INVISIBLE)
-                }else{
-                    notificationLayout.setViewVisibility(R.id.imageView3, View.VISIBLE)
-                }
-                notificationLayout.setTextViewText(R.id.tv_notify_tittle_two, tittle)
-                notificationLayout.setTextViewText(R.id.tv_notify_body, body)
-                notificationLayout.setImageViewBitmap(R.id.iv_notify_main_iv, imgBitmap)
+
+
+
+                notificationLayout.setTextViewText(R.id.tvNotifactionTile, tittle)
+                notificationLayout.setTextViewText(R.id.tvNotifactionBody, body)
+                notificationLayout.setImageViewBitmap(R.id.notificationImage, imgBitmap)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     setupChannels(notificationManager)
@@ -92,10 +90,11 @@ class CustomNotification {
                 val notificationSoundUri =
                     RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
                 val notificationBuilder = NotificationCompat.Builder(context, Constants.CAHNNEL_ID)
-                    .setSmallIcon(R.drawable.videocam_24)
+                    .setSmallIcon(R.drawable.ic_baseline_ondemand_video_24)
                     .setCustomContentView(notificationLayout)
                     .setCustomBigContentView(notificationLayout)
-                    .setPriority(NotificationCompat.PRIORITY_LOW)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setSound(null)
                     .setContentIntent(pendingIntent)
                 notificationManager.notify(notificationID, notificationBuilder.build())
             } catch (e: Exception) {
@@ -112,10 +111,11 @@ class CustomNotification {
                 NotificationChannel(
                     Constants.CAHNNEL_ID,
                     Constants.NEWMATCH,
-                    NotificationManager.IMPORTANCE_LOW
+                    NotificationManager.IMPORTANCE_DEFAULT
                 )
             adminChannel.description = Constants.DEC
             adminChannel.enableLights(true)
+            adminChannel.setSound(null,null)
             adminChannel.lightColor = Color.RED
             notificationManager?.createNotificationChannel(adminChannel)
         }

@@ -21,6 +21,7 @@ import android.view.WindowManager
 import android.widget.TextView
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
        window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        createTimer(COUNTER_TIME)
+
         startActivity()
 
 //        val notificationsFromFirestore=NotificationsFromFirestore()
@@ -57,44 +58,13 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
         window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
-    private fun createTimer(seconds: Long) {
-         countDownTimer = object : CountDownTimer(seconds * 1000, 1000) {
-            @SuppressLint("SetTextI18n")
-            override fun onTick(millisUntilFinished: Long) {
-                secondsRemaining = millisUntilFinished / 1000 + 1
-                // counterTextView.text = "App is done loading in: $secondsRemaining"
-            }
 
-            @SuppressLint("SetTextI18n")
-            override fun onFinish() {
-                secondsRemaining = 0
-                // counterTextView.text = "Done."
-
-                val application = application as? MyApplication
-
-                if (application == null) {
-                    Log.e(LOG_TAG, "Failed to cast application to MyApplication.")
-
-                    return
-                }
-
-
-                // Show the app open ad.
-                application.showAdIfAvailable(
-                    this@MainActivity,
-                    object : MyApplication.OnShowAdCompleteListener {
-                        override fun onShowAdComplete() {
-
-
-                        }
-                    })
-            }
-        }
-
-    }
     private fun startActivity(){
         val notificationIntent = intent.getStringExtra(CommonKeys.NOTIFICATION_URL)
         if (notificationIntent != null) {
+
+            val firebaseAnalytics = FirebaseAnalytics.getInstance(applicationContext)
+            firebaseAnalytics.logEvent(CommonKeys.AN_NEW_NOTIFICATION_OPEN, null)
             val bundle = Bundle()
             bundle.putString(CommonKeys.VID_URL, notificationIntent)
             val home = HomeFragment()
@@ -122,18 +92,33 @@ class MainActivity : AppCompatActivity() {
         }
         remoteConfig.setDefaultsAsync(R.xml.remote_config_default_key)
 
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-        val uploadWorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
-            .setInitialDelay(30,TimeUnit.SECONDS)
-            .setConstraints(constraints)
-            .build()
-//        val saveRequest =
-//            PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.DAYS)
-//                .setConstraints(constraints)
-//                .build()
+        val constraints = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresDeviceIdle(true)
+                .build()
+        } else {
+            Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+        }
 
-        WorkManager.getInstance(this).enqueue(uploadWorkRequest)
-    }
+        if (BuildConfig.DEBUG){
+            val checkNotificationWorker =
+                OneTimeWorkRequestBuilder<NotificationWorker>()
+
+                    .build()
+
+            WorkManager.getInstance(this).enqueue(checkNotificationWorker)
+
+        }else{
+            val checkNotificationWorker =
+                PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.DAYS)
+                    .setConstraints(constraints)
+                    .build()
+
+            WorkManager.getInstance(this).enqueueUniquePeriodicWork("checkNewWallpaper",ExistingPeriodicWorkPolicy.KEEP,checkNotificationWorker)
+
+        }
+            }
 }

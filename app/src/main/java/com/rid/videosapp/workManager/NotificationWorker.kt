@@ -88,7 +88,6 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
                             callNotification(newWallpaperNotification)
                             val bundle = Bundle()
                             val firebaseAnalytics = FirebaseAnalytics.getInstance(applicationContext)
-                            bundle.putString(CommonKeys.LOG_EVENT, "new notification against key $isNew")
                             firebaseAnalytics.logEvent(CommonKeys.NEW_NOTIFICAION, bundle)
                             Log.d(TAG,"remote key is else $isNew")
                         }

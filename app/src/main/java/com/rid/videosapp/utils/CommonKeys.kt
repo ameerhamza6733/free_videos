@@ -18,6 +18,7 @@ class CommonKeys {
         const val VIDEOS_PLAY_CLICKED="video_play_clicked"
         const val VIDEOS_FROM_CATEGORIES="categories_clicked"
         const val NEW_NOTIFICAION="new_notification_key_get"
+        const val AN_NEW_NOTIFICATION_OPEN="new_wallpaper_notification_open"
         const val VID_PLAYING="video_play_successfully"
         const val INTERNET_ERROR="internet_error"
         const val RETRY_CLICKED="retry_clicked_for_video"
