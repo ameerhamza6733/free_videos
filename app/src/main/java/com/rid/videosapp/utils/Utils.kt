@@ -9,6 +9,7 @@ import android.database.Cursor
 import android.net.Uri
 import com.rid.videosapp.dataClasses.TopCategories
 import android.provider.MediaStore
+import android.util.TypedValue
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import com.rid.videosapp.dataClasses.TopCategoriesArray
@@ -47,6 +48,10 @@ class Utils {
         }
 
 
+        val Number.toPx get() = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            this.toFloat(),
+            Resources.getSystem().displayMetrics)
         fun shareImg(context: Context, url: String) {
             val intent = Intent()
             intent.action = Intent.ACTION_SEND
@@ -59,16 +64,7 @@ class Utils {
             context.startActivity(intent)
         }
 
-        fun addTopCategories(): List<TopCategories> {
 
-            val categoriesJson= FirebaseRemoteConfig.getInstance().getString(CommonKeys.RC_TOP_CATEGORIES).replace("^\"|\"$", "")
-
-            val gson = Gson()
-            val array= gson.fromJson<TopCategoriesArray>(categoriesJson,TopCategoriesArray::class.java)
-
-            return array.TopCategories
-
-        }
 
     }
 }

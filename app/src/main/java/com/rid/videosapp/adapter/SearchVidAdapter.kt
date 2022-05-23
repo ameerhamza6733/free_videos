@@ -65,9 +65,7 @@ class SearchVidAdapter(
 
     }
     override fun getItemViewType(position: Int): Int {
-        if ((position+1)%10==0) {
-            return AD
-        } else return CONTENT
+         return CONTENT
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == CONTENT) {

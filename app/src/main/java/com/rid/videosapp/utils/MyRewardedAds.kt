@@ -47,7 +47,7 @@ class MyRewardedAds() {
                     override fun onAdDismissedFullScreenContent() {
                         Log.d(TAG, "Ad was dismissed.")
                         mRewardedAd = null
-                        loadRewardedAd(context,adId)
+
                     }
 
                     override fun onAdFailedToShowFullScreenContent(adError: AdError?) {

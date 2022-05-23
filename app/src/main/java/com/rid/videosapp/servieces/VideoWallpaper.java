@@ -142,21 +142,17 @@ public class VideoWallpaper extends WallpaperService {
                 if (mMediaPlayer != null) {
                     mMediaPlayer.start();
                     Log.d(TAG,"start media player  ");
-                    Toast.makeText(getApplicationContext(), "start media player ", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "media player is null", Toast.LENGTH_SHORT).show();
 
                 }
 
             } else {
                 if (mMediaPlayer != null) {
                     Log.d(TAG,"stop media player ");
-                    Toast.makeText(getApplicationContext(), "stop media player ", Toast.LENGTH_SHORT).show();
 
                     mMediaPlayer.pause();
                 } else {
-                    Toast.makeText(getApplicationContext(), "stop media player error", Toast.LENGTH_SHORT).show();
                 }
 
             }

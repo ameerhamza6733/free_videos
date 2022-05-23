@@ -8,7 +8,8 @@
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/rec_view_img_view_id"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
         android:adjustViewBounds="true"
         app:shapeAppearanceOverlay="@style/MainCircular"
         app:layout_constraintEnd_toEndOf="parent"

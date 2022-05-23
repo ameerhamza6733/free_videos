@@ -39,7 +39,15 @@
         app:layout_constraintStart_toStartOf="@+id/share_id"
         app:layout_constraintEnd_toEndOf="@+id/share_id"
         />
-
+<ProgressBar
+    android:id="@+id/progressDownload"
+    android:visibility="invisible"
+    app:layout_constraintBottom_toBottomOf="@id/download_id"
+    app:layout_constraintEnd_toEndOf="@id/download_id"
+    app:layout_constraintStart_toStartOf="@id/download_id"
+    app:layout_constraintTop_toTopOf="@id/download_id"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/vid_duration_id"
         android:layout_width="wrap_content"

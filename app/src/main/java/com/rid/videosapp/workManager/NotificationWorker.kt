@@ -48,10 +48,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
 
 
         remoteConfig = Firebase.remoteConfig
-        val configSettings = remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 60
-        }
-        remoteConfig.setConfigSettingsAsync(configSettings)
+
         remoteConfig.setDefaultsAsync(R.xml.remote_config_default_key)
 
         remoteConfig.fetchAndActivate()
@@ -61,7 +58,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
                     val oldKey= PrefUtils.getString(applicationContext,CommonKeys.RC_NEW_WALLPAPER_NOTIFICATION)
                     val isNew = remoteConfig.getString(CommonKeys.RC_NEW_WALLPAPER_NOTIFICATION)
 
-                    if (false){
+                    if (oldKey.equals(isNew)){
                         Log.d(TAG,"remote key $isNew")
                     }else{
                         val gson=Gson()

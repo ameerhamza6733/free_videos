@@ -88,22 +88,25 @@ class VideosAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        if ((position+1)%10==0) {
-            return AD
-        } else return CONTENT
+      return CONTENT
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if ((position+1)%10==0) {
-            holder as MyAdViewHolder
-        } else {
-            val list = vidList[holder.adapterPosition]
-            holder as MyViewHolder
-            Glide.with(context)
-                .applyDefaultRequestOptions(RequestOptions().placeholder(R.drawable.ic_baseline_image_24))
-                .load(list.videoImage)
-                .into(holder.imgView)
-        }
+       when(holder) {
+           is MyAdViewHolder -> {
+
+
+           }
+           is MyViewHolder -> {
+               val list = vidList[holder.adapterPosition]
+               holder as MyViewHolder
+               Glide.with(context)
+                   .applyDefaultRequestOptions(RequestOptions().placeholder(R.drawable.ic_baseline_image_24))
+                   .load(list.videoImage)
+                   .into(holder.imgView)
+           }
+       }
+
     }
 
     override fun getItemCount(): Int {

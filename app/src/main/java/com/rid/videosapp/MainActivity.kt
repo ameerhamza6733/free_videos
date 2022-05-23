@@ -82,15 +82,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-        val remoteConfig = Firebase.remoteConfig
-        val configSettings = remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 3600
-        }
-        if (BuildConfig.DEBUG){
-            remoteConfig.setConfigSettingsAsync(configSettings)
 
-        }
-        remoteConfig.setDefaultsAsync(R.xml.remote_config_default_key)
 
         val constraints = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Constraints.Builder()
@@ -106,7 +98,6 @@ class MainActivity : AppCompatActivity() {
         if (BuildConfig.DEBUG){
             val checkNotificationWorker =
                 OneTimeWorkRequestBuilder<NotificationWorker>()
-
                     .build()
 
             WorkManager.getInstance(this).enqueue(checkNotificationWorker)

@@ -54,6 +54,7 @@ class CategoriesAdapter(val context: Context, val list: List<TopCategories>) :
         val recList = list[position]
         holder.tvRec.text = recList.ImgTittle
         Glide.with(context)
+
             .load(recList.ImgeUrl)
             .into(holder.img)
     }

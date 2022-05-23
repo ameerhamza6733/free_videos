@@ -71,7 +71,12 @@ class CustomNotification {
                 CommonKeys.NOTIFICATION_URL,
                 vidUrl
             )
-            val pendingIntent = PendingIntent.getActivity(context, Constants.request, intent, 0)
+            val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                PendingIntent.getActivity(context, Constants.request, intent, PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            } else {
+                PendingIntent.getActivity(context, Constants.request, intent,  0)
+
+            }
             try {
                 val notificationManager =
                     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

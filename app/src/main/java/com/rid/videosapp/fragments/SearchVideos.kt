@@ -39,15 +39,14 @@ class SearchVideos : Fragment() {
     private lateinit var staggeredGridLayoutManager: GridLayoutManager
     private lateinit var searchRepo: SearchRepo
     val TAG = "SearchVideos"
-    var queryToSend = ""
     private lateinit var bundle: Bundle
     var myList = ArrayList<Video>()
     private lateinit var vidAdapter: SearchVidAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        queryToSend = arguments?.get(Constants.QUERY_KEY).toString()
-       viewModel.getPixelVideos(queryToSend)
-         }
+        viewModel.queryToSearch = arguments?.get(Constants.QUERY_KEY).toString()
+        callViewModel()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,13 +65,12 @@ class SearchVideos : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-           viewModel.queryToSearch = queryToSend
         bindView.customTbId.searchViewTbId.setQuery(viewModel.queryToSearch, false)
         initialization()
         callingAndObservingViewModel()
         onClickListeners()
         passDataToVideoAdapter()
-        bindView.customTbId.searchViewTbId.setQuery(queryToSend, false)
+        bindView.customTbId.searchViewTbId.setQuery(viewModel.queryToSearch, false)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -166,7 +164,7 @@ class SearchVideos : Fragment() {
                     ft.replace(R.id.fragment_container, searchVideos)
                     ft.addToBackStack(SearchVideos().TAG)
                     ft.commit()
-                    bindView.customTbId.searchViewTbId.setQuery(queryToSend, false)
+                    bindView.customTbId.searchViewTbId.setQuery(viewModel.queryToSearch, false)
                     vidAdapter.notifyDataSetChanged()
                 } else {
                     Utils.showToast(requireContext(), getString(R.string.search_view_empty))
@@ -179,21 +177,20 @@ class SearchVideos : Fragment() {
             }
         })
         bindView.idBtnShowMore.setOnClickListener {
-            requestForNewData()
+            bindView.pbHorizontalId.visibility = View.VISIBLE
+
+            viewModel.isNewData = true
+            callViewModel()
         }
     }
 
-    private fun callViewModel(query: String) {
-        viewModel.getPixelVideos(query)
+    private fun callViewModel() {
+
+        viewModel.getPixelVideos()
 
     }
 
-    private fun requestForNewData() {
-        bindView.pbHorizontalId.visibility = View.VISIBLE
-        viewModel.isNewData = true
-        callViewModel(viewModel.queryToSearch)
 
-    }
 
     private fun openNetworkErrorBottomSheet(context: Context) {
         val bottomView =
@@ -203,7 +200,7 @@ class SearchVideos : Fragment() {
         val button = bottomView.findViewById<Button>(R.id.btRetry)
         button.setOnClickListener {
             callViewModel(
-                viewModel.queryToSearch
+
             )
             bottomSheetDialog.dismiss()
         }

@@ -44,7 +44,7 @@ class PlayVideo : Fragment() {
     val TAG = "PlayVideo"
     var vidDuration = 0
     private lateinit var firebaseAnalytics: FirebaseAnalytics
-    private lateinit var dialog: Dialog
+    private  var dialog: Dialog?=null
     private lateinit var rootView: FragmentPlayVideoBinding
     private val onDownloadComplete: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
@@ -54,13 +54,13 @@ class PlayVideo : Fragment() {
                 .getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             val mostRecentDownload: Uri = mDownloadManager.getUriForDownloadedFile(id)
             fileViewModel.renameFile("wallpaper.mp4","currentWallpaper.mp4")
+            rootView.downloadId.isEnabled=true
+            rootView.progressDownload.visibility=View.INVISIBLE
+            if (dialog?.isShowing==true){
+                dialog?.dismiss()
+            }
         }
 
-
-    }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        requireActivity(). registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
     }
 
@@ -71,7 +71,6 @@ class PlayVideo : Fragment() {
         // Inflate the layout for this fragment
         rootView = FragmentPlayVideoBinding.inflate(layoutInflater, container, false)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        myRewardedAds.loadRewardedAd(requireActivity(),getString(R.string.admob_video_ad))
         return rootView.root
     }
 
@@ -85,10 +84,7 @@ class PlayVideo : Fragment() {
     }
 
     fun setToWallPaper(context: Context) {
-        try {
-            WallpaperManager.getInstance(context).clear()
-        } catch (e: java.lang.Exception) {
-        }
+
         val setWallaperIntent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
         setWallaperIntent.putExtra(
             WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, ComponentName(
@@ -98,6 +94,8 @@ class PlayVideo : Fragment() {
         )
         setWallaperIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(setWallaperIntent)
+
+
     }
 
 
@@ -131,31 +129,34 @@ class PlayVideo : Fragment() {
     }
 
     private fun dowloadWallaper(){
-        val mostDownloaded = MostDownloaded(myUrl, ownerName)
+        rootView.progressDownload.visibility=View.VISIBLE
+        rootView.downloadId.isEnabled=false
+        fileViewModel.downloadFile(myUrl,ownerName)
 
-        WallpaperManager.getInstance(activity).clear()
-        DownloadUtils.downloadFile(
-            myUrl,
-            requireActivity()!!.filesDir,
-            requireContext(),
-            ownerName
-        )
     }
 
     override fun onDetach() {
         super.onDetach()
+        if (dialog?.isShowing==true){
+            dialog?.dismiss()
+        }
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 
     override fun onPause() {
+        requireActivity(). unregisterReceiver(onDownloadComplete);
+        if (mediaPlayer?.isPlaying==true){
+            mediaPlayer?.pause()
+
+        }
         super.onPause()
-        mediaPlayer?.pause()
 
     }
     override fun onResume() {
         super.onResume()
+        requireActivity(). registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
-       try {
+        try {
            mediaPlayer?.start()
        }catch (e:Exception){
            e.printStackTrace()
@@ -184,17 +185,13 @@ class PlayVideo : Fragment() {
     }
 
 
-    override fun onDestroy() {
 
-        requireActivity(). unregisterReceiver(onDownloadComplete);
-        super.onDestroy()
-    }
 
     @SuppressLint("SetTextI18n")
     fun onClickListneres() {
         rootView.downloadId.setOnClickListener {
 
-            DownloadDialog().show(parentFragmentManager,TAG)
+            dowloadWallaper()
         }
 
         rootView.shareId.setOnClickListener {
@@ -203,7 +200,7 @@ class PlayVideo : Fragment() {
 
         rootView.exoplayerViewId.setOnPreparedListener {
             it.isLooping = true
-            dialog.dismiss()
+            dialog?.dismiss()
             bundle.putString(CommonKeys.LOG_EVENT, "video play successfully")
             firebaseAnalytics.logEvent(CommonKeys.VID_PLAYING, bundle)
             rootView.exoplayerViewId.start()
@@ -222,26 +219,30 @@ class PlayVideo : Fragment() {
             mediaPlayer?.setOnVideoSizeChangedListener { mp, arg1, arg2 -> // TODO Auto-generated method stub
                 mediaPlayer?.start()
                 mediaPlayer?.isLooping = true
-                dialog.dismiss()
+                dialog?.dismiss()
             }
         })
     }
 
     @SuppressLint("SetTextI18n")
     private fun showProgressDialog(ownerName: String, duration: String) {
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.custome_dialog)
-        val tvDialogOwner = dialog.findViewById<TextView>(R.id.tv_owner_name_id)
-        val tvDialogDuration = dialog.findViewById<TextView>(R.id.tv_duraton)
-        val btnBackDialog = dialog.findViewById<ImageView>(R.id.iv_btn_back_dialog)
-        btnBackDialog.setOnClickListener {
+        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog?.setCancelable(true)
+        dialog?.setContentView(R.layout.custome_dialog)
+        val tvDialogOwner = dialog?.findViewById<TextView>(R.id.tv_owner_name_id)
+        val tvDialogDuration = dialog?.findViewById<TextView>(R.id.tv_duraton)
+        val btnBackDialog = dialog?.findViewById<ImageView>(R.id.iv_btn_back_dialog)
+        btnBackDialog?.setOnClickListener {
             goBackToMain()
         }
-        tvDialogOwner.text = ownerName
-        tvDialogDuration.text = duration + getString(R.string.sec)
-        dialog.create()
-        dialog.show()
+        tvDialogOwner?.text = ownerName
+        tvDialogDuration?.text = duration + getString(R.string.sec)
+       if (dialog?.isShowing==true){
+           dialog?.dismiss()
+
+       }
+        dialog?.create()
+        dialog?.show()
     }
 
     fun openBottomSheetForError(context: Context, errorMessage: String) {
@@ -279,8 +280,8 @@ class PlayVideo : Fragment() {
         if (rootView.exoplayerViewId.isPlaying) {
             rootView.exoplayerViewId.stopPlayback()
         }
-        if (dialog.isShowing) {
-            dialog.dismiss()
+        if (dialog?.isShowing==true) {
+            dialog?.dismiss()
         }
         mediaPlayer?.pause()
         mediaPlayer?.release()

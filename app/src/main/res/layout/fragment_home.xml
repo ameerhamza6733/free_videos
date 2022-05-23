@@ -8,6 +8,7 @@
     tools:context=".fragments.HomeFragment">
 
     <include
+
         android:id="@+id/custom_tb_id"
         layout="@layout/custome_toolbar"
         app:layout_constraintTop_toTopOf="parent" />

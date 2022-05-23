@@ -3,17 +3,14 @@ package com.rid.videosapp.fragments
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.view.*
-import androidx.fragment.app.Fragment
-import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.ViewModelProvider
-import com.rid.videosapp.adapter.VideosAdapter
-import com.rid.videosapp.constants.Constants
-import com.rid.videosapp.dataClasses.Video
-import dev.sagar.lifescience.utils.Resource
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
@@ -24,10 +21,18 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.rid.videosapp.R
 import com.rid.videosapp.adapter.CategoriesAdapter
+import com.rid.videosapp.adapter.VideosAdapter
+import com.rid.videosapp.constants.Constants
+import com.rid.videosapp.dataClasses.TopCategories
+import com.rid.videosapp.dataClasses.TopCategoriesArray
+import com.rid.videosapp.dataClasses.Video
 import com.rid.videosapp.databinding.FragmentHomeBinding
 import com.rid.videosapp.repostroy.SearchRepo
-import com.rid.videosapp.utils.*
+import com.rid.videosapp.utils.CommonKeys
+import com.rid.videosapp.utils.Utils
+import com.rid.videosapp.utils.isInternetError
 import com.rid.videosapp.viewModel.SearchViewModel
+import dev.sagar.lifescience.utils.Resource
 
 
 class HomeFragment : Fragment() {
@@ -75,8 +80,25 @@ class HomeFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private fun callingAndObservingViewModel() {
         searchViewModel.searchHistoryLastItem(searchRepo)
+        searchViewModel.categoriesLiveData.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { resource ->
+                when (resource) {
+                    is Resource.Error -> {
+
+                    }
+                    is Resource.Loading -> {
+
+                    }
+                    is Resource.Success -> {
+                        topCategoryAdapter=CategoriesAdapter(requireActivity(),resource.response)
+                        bindView.recViewCategories.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+                        bindView.recViewCategories.adapter=topCategoryAdapter
+                    }
+                }
+            }
+        }
         searchViewModel.pixelVideoSearchLiveData.observe(viewLifecycleOwner) {
-            it.peekContent().let { resource ->
+            it.getContentIfNotHandled()?.let { resource ->
                 when (resource) {
                     is Resource.Error -> {
                         bindView.pbBarId.visibility = View.INVISIBLE
@@ -93,7 +115,10 @@ class HomeFragment : Fragment() {
                         }
                     }
                     is Resource.Loading -> {
-                        bindView.customTbId.searchViewTbId.setQuery(searchViewModel.queryToSearch,false)
+                        bindView.customTbId.searchViewTbId.setQuery(
+                            searchViewModel.queryToSearch,
+                            false
+                        )
                         bindView.pbBarId.visibility = View.VISIBLE
 
                     }
@@ -123,18 +148,14 @@ class HomeFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private fun initialization() {
 
-        searchRepo = SearchRepo(DataBaseModule.getDatabase(requireActivity().applicationContext).Dao())
+        searchRepo =
+            SearchRepo(DataBaseModule.getDatabase(requireActivity().applicationContext).Dao())
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(requireContext())
         gridLayoutManager =
-            GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
+            GridLayoutManager(requireContext(), 3, GridLayoutManager.VERTICAL, false)
         bindView.recViewMainId.layoutManager = gridLayoutManager
 
-        bindView.recViewCategories.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        topCategoryAdapter = CategoriesAdapter(requireContext(), Utils.addTopCategories())
-        bindView.recViewCategories.adapter = topCategoryAdapter
-        topCategoryAdapter.notifyDataSetChanged()
 
     }
 
@@ -142,7 +163,6 @@ class HomeFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private fun passDataToVideoAdapter() {
         vidAdapter = VideosAdapter(requireContext(), myVideosList, this)
-        bindView.recViewMainId.hasFixedSize()
         bindView.recViewMainId.adapter = vidAdapter
         //        val layout =
 //            LayoutInflater.from(context)
@@ -191,15 +211,16 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun callViewModel(query: String) {
-        searchViewModel.getPixelVideos(query)
+    private fun callViewModel() {
+
+        searchViewModel.getPixelVideos()
 
     }
 
     fun requestForNewData() {
         bindView.pbHorizontalId.visibility = View.VISIBLE
         searchViewModel.isNewData = true
-        searchViewModel.getPixelVideos(searchViewModel.queryToSearch)
+        callViewModel()
     }
 
     fun openBoottomSheet(context: Context) {
@@ -210,7 +231,6 @@ class HomeFragment : Fragment() {
         val button = bottomView.findViewById<Button>(R.id.btRetry)
         button.setOnClickListener {
             callViewModel(
-                searchViewModel.queryToSearch
             )
             bottomSheetDialog.dismiss()
         }
