@@ -13,7 +13,7 @@ object PrefUtils {
 
     fun setString(context: Context, key: String, value: String?) {
         if (value != null && !value.isEmpty())
-            getPreferences(context).edit().putString(key, value).apply()
+            getPreferences(context).edit().putString(key, value).commit()
     }
 
     fun clearStringData(context: Context, key: String) {

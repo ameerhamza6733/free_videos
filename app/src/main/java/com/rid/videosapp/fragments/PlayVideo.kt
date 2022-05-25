@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.rid.videosapp.R
@@ -144,7 +145,7 @@ class PlayVideo : Fragment() {
     }
 
     override fun onPause() {
-        requireActivity(). unregisterReceiver(onDownloadComplete);
+        requireActivity().applicationContext. unregisterReceiver(onDownloadComplete);
         if (mediaPlayer?.isPlaying==true){
             mediaPlayer?.pause()
 
@@ -152,9 +153,10 @@ class PlayVideo : Fragment() {
         super.onPause()
 
     }
+
     override fun onResume() {
         super.onResume()
-        requireActivity(). registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+       requireActivity().applicationContext. registerReceiver(onDownloadComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
         try {
            mediaPlayer?.start()

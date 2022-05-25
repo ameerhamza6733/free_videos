@@ -38,15 +38,10 @@ public class VideoWallpaper extends WallpaperService {
     public static final String IS_SILENCE = "is_silence";
     private static final String TAG = VideoWallpaper.class.getName();
     private static boolean _sound = false;
+    private static String wallPaperPath="";
     private FileInputStream inputStream;
 
 
-
-    /**
-     * 设置静音
-     *
-     * @param context
-     */
     public static void setVoiceSilence(Context context) {
         Intent intent = new Intent(VIDEO_PARAMS_CONTROL_ACTION);
         intent.putExtra(ACTION, ACTION_VOICE_SILENCE);
@@ -96,14 +91,11 @@ public class VideoWallpaper extends WallpaperService {
     }
 
 
-
-
     @Override
     public Engine onCreateEngine() {
-     String path=   PrefUtils.INSTANCE.getString(this,"currentWallpaper");
+      wallPaperPath=   PrefUtils.INSTANCE.getString(this,"currentWallpaper");
 
-        Log.d(TAG,"onCreateEngine "+path);
-        if (path == null || TextUtils.isEmpty(path.toString())) {
+        if (wallPaperPath == null || TextUtils.isEmpty(wallPaperPath.toString())) {
             Toast.makeText(VideoWallpaper.this, "Please select wallpaper first: ", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(VideoWallpaper.this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -161,19 +153,19 @@ public class VideoWallpaper extends WallpaperService {
         @Override
         public void onSurfaceCreated(SurfaceHolder holder) {
             super.onSurfaceCreated(holder);
-            String path=   PrefUtils.INSTANCE.getString(VideoWallpaper.this,"currentWallpaper");
 
-            if (path == null || TextUtils.isEmpty(path.toString())) {
+            if (wallPaperPath == null || TextUtils.isEmpty(wallPaperPath.toString())) {
+                wallPaperPath=   PrefUtils.INSTANCE.getString(VideoWallpaper.this,"currentWallpaper");
 
-            } else {
-                Log.d(TAG, "" + path);
+            }
+                Log.d(TAG, "" + wallPaperPath);
                 mMediaPlayer = new MediaPlayer();
                 mMediaPlayer.setSurface(holder.getSurface());
 
 
                 try {
 
-                    mMediaPlayer.setDataSource(VideoWallpaper.this,Uri.parse(path) );
+                    mMediaPlayer.setDataSource(VideoWallpaper.this,Uri.parse(wallPaperPath) );
                     mMediaPlayer.setLooping(true);
                     if (_sound) {
                         mMediaPlayer.setVolume(1.0f, 1.0f);
@@ -193,7 +185,7 @@ public class VideoWallpaper extends WallpaperService {
 
                     e.printStackTrace();
                 }
-            }
+
 
         }
 
