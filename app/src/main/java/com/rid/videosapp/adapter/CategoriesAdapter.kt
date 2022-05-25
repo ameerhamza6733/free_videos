@@ -37,7 +37,7 @@ class CategoriesAdapter(val context: Context, val list: List<TopCategories>) :
                 val searchVideos = SearchVideos()
                 searchVideos.arguments = bundle
                 val ft: FragmentTransaction = fm.beginTransaction()
-                ft.replace(R.id.fragment_container, searchVideos)
+                ft.add(R.id.fragment_container, searchVideos)
                 ft.addToBackStack(HomeFragment().TAG)
                 ft.commit()
             }

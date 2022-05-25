@@ -48,7 +48,7 @@ class SearchVidAdapter(
                 playVideo.arguments = args
                 val fm: FragmentManager = (context as AppCompatActivity).supportFragmentManager
                 val ft: FragmentTransaction = fm.beginTransaction()
-                ft.replace(R.id.fragment_container, playVideo)
+                ft.add(R.id.fragment_container, playVideo)
                 ft.addToBackStack(SearchVideos().TAG)
                 ft.commit()
             }
@@ -79,7 +79,7 @@ class SearchVidAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if ((position+1)%10==0) {
+        if (false) {
             holder as SearchVidAdapter.MyAdViewHolder
         } else {
             val list = vidList[position]

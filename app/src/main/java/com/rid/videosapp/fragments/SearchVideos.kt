@@ -161,7 +161,7 @@ class SearchVideos : Fragment() {
                     val searchVideos = SearchVideos()
                     searchVideos.arguments = bundle
                     val ft: FragmentTransaction = fm.beginTransaction()
-                    ft.replace(R.id.fragment_container, searchVideos)
+                    ft.add(R.id.fragment_container, searchVideos)
                     ft.addToBackStack(SearchVideos().TAG)
                     ft.commit()
                     bindView.customTbId.searchViewTbId.setQuery(viewModel.queryToSearch, false)

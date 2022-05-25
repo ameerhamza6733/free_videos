@@ -60,7 +60,8 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
 
                     if (oldKey.equals(isNew)){
                         Log.d(TAG,"remote key $isNew")
-                    }else{
+                    }
+                    else if (isNew.length>5){
                         val gson=Gson()
                         val newWallpaperNotification= gson.fromJson<NewWallpaperNotification>(isNew,NewWallpaperNotification::class.java)
                         if (newWallpaperNotification.wallpaperProvider.equals(CommonKeys.NEW_NOTIFICATION_WALLPAPER_PEXELS_PROVIDER)){
