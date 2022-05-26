@@ -37,11 +37,11 @@ companion object {
         val uri = Uri.parse(downloadPath) // Path where you want to download file.
         val request = DownloadManager.Request(uri)
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE or DownloadManager.Request.NETWORK_WIFI) // Tell on which network you want to download file.
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED) // This will show notification on top when downloading the file.
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION) // This will show notification on top when downloading the file.
         request.setTitle(FileName + "") // Title for notification.
-        request.setVisibleInDownloadsUi(true)
+        request.setVisibleInDownloadsUi(false)
         request.setDestinationInExternalFilesDir(
-           context,Environment.DIRECTORY_DOWNLOADS,"wallpaper.mp4"
+           context,Environment.DIRECTORY_DOWNLOADS,"$FileName.mp4"
         ) // Storage directory path
        val downloadManger= (context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager)
           val downloadId= downloadManger.enqueue(request)

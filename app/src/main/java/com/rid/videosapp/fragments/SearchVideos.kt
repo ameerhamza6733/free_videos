@@ -104,8 +104,10 @@ class SearchVideos : Fragment() {
                         bindView.pbBarId.visibility = View.INVISIBLE
                         bindView.recViewMainId.visibility = View.VISIBLE
                         if (viewModel.isNewData) {
+                            val oldCount = myList.size
                             myList.addAll(resource.response.videos)
                             vidAdapter.notifyDataSetChanged()
+                            bindView.recViewMainId.smoothScrollToPosition(oldCount)
                             viewModel.isNewData = false
                         }
                     }

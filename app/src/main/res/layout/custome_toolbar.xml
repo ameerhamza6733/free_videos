@@ -3,10 +3,11 @@
     android:layout_width="match_parent"
     android:layout_marginTop="60dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
+    android:background="?android:attr/colorBackground"
     android:layout_height="@dimen/toolbar_size">
 
     <androidx.appcompat.widget.SearchView
+
         android:id="@+id/search_view_tb_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

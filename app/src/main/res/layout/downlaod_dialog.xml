@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?android:attr/colorBackground"
     app:cardCornerRadius="@dimen/value_6dp"
     android:layout_margin="@dimen/value_10dp"
     >
@@ -15,6 +16,7 @@
 
 
     <TextView
+        android:textColor="?android:attr/textColorPrimary"
         android:id="@+id/textView3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -65,6 +67,7 @@
         app:layout_constraintTop_toTopOf="@+id/tv_dialog_cancel" />
 
     <TextView
+        android:textColor="?android:attr/textColorPrimary"
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

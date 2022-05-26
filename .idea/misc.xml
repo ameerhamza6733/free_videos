@@ -38,13 +38,18 @@
         <entry key="..\:/PersonalWork/AndroidProjects/VideosApp/app/src/main/res/layout/network_error_bottom_sheet.xml" value="0.25" />
         <entry key="..\:/PersonalWork/AndroidProjects/VideosApp/app/src/main/res/layout/scrim.xml" value="0.1" />
         <entry key="..\:/PersonalWork/AndroidProjects/VideosApp/app/src/main/res/menu/menu.xml" value="0.20260416666666667" />
+        <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.1355" />
         <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/layout/activity_main.xml" value="0.14427083333333332" />
+        <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/layout/activity_splash.xml" value="0.14427083333333332" />
+        <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/layout/bottom_sheet.xml" value="0.14427083333333332" />
+        <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/layout/custome_dialog.xml" value="0.14427083333333332" />
         <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/layout/custome_notification.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/layout/custome_toolbar.xml" value="0.10740740740740741" />
+        <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/layout/downlaod_dialog.xml" value="0.14427083333333332" />
         <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/layout/each_recview_main.xml" value="0.14427083333333332" />
         <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/layout/each_top_categories.xml" value="0.14427083333333332" />
         <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/layout/fragment_home.xml" value="0.14427083333333332" />
-        <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/layout/fragment_play_video.xml" value="0.1213768115942029" />
+        <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/layout/fragment_play_video.xml" value="0.14666666666666667" />
         <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/layout/fragment_search_videos.xml" value="0.10740740740740741" />
         <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1355" />
         <entry key="..\:/Users/LENOVO/StudioProjects/free_videos/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1355" />

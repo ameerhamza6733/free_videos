@@ -1,6 +1,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="?android:attr/colorBackground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <ImageView
@@ -14,6 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_arrow_back_24" />
     <TextView
+        android:textColor="?android:attr/textColorPrimary"
         android:id="@+id/tv_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,9 +34,9 @@
         android:layout_margin="@dimen/value_8dp"
         android:layout_marginTop="@dimen/value_8dp"
         android:layout_marginEnd="@dimen/value_8dp"
-        android:fontFamily="@font/comfortaa_semibold"
+        android:fontFamily="@font/comfortaa_regular"
         android:text="@string/owner_name"
-        android:textColor="@color/black"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_siz_16"
         app:layout_constraintEnd_toStartOf="@+id/tv_owner_name_id"
         app:layout_constraintStart_toStartOf="parent"
@@ -47,6 +49,7 @@
         android:layout_margin="@dimen/value_8dp"
         android:fontFamily="@font/comfortaa_semibold"
         android:textSize="@dimen/text_siz_16"
+        android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintBottom_toBottomOf="@+id/owner_name_tag"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/owner_name_tag"
@@ -70,18 +73,20 @@
         android:layout_marginTop="@dimen/value_8dp"
         android:fontFamily="@font/comfortaa_semibold"
         android:text="@string/video_duration"
-        android:textColor="@color/black"
+        android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/text_siz_16"
         app:layout_constraintEnd_toStartOf="@+id/tv_duraton"
         app:layout_constraintStart_toStartOf="@+id/owner_name_tag"
         app:layout_constraintTop_toBottomOf="@+id/owner_name_tag" />
 
     <TextView
+        android:layout_marginTop="@dimen/value_8dp"
         android:id="@+id/tv_duraton"
         android:layout_width="@dimen/value_0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/comfortaa_semibold"
         android:textSize="@dimen/text_siz_16"
+        android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintBottom_toBottomOf="@+id/tv_duration_tag"
         app:layout_constraintEnd_toEndOf="@+id/tv_owner_name_id"
         app:layout_constraintStart_toEndOf="@+id/tv_duration_tag"

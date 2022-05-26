@@ -134,9 +134,10 @@ class HomeFragment : Fragment() {
                                 bindView.idBtnShowMore.visibility = View.VISIBLE
 
                             }
-
+                            val oldListCount=myVideosList.size
                             myVideosList.addAll(resource.response.videos)
                             vidAdapter.notifyDataSetChanged()
+                            bindView.recViewMainId.smoothScrollToPosition(oldListCount)
                             searchViewModel.isNewData = false
                         }
                     }

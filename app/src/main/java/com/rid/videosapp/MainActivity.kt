@@ -1,62 +1,57 @@
 package com.rid.videosapp
 
-import android.annotation.SuppressLint
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.*
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.rid.videosapp.fragments.HomeFragment
-import com.rid.videosapp.repostroy.NotificationsFromFirestore
 import com.rid.videosapp.utils.CommonKeys
 import com.rid.videosapp.workManager.NotificationWorker
-import java.util.concurrent.TimeUnit
-import android.content.ComponentName
-
-import android.content.Intent
-import android.os.Build
-import android.os.CountDownTimer
-import android.os.Debug
-import android.util.Log
-import android.view.Window
-import android.view.WindowManager
-import android.widget.TextView
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
-import com.rid.videosapp.utils.Utils
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     private var countDownTimer: CountDownTimer?=null
+    private val TAG="MainActivityTAG"
+    var onComplete: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(ctxt: Context?, intent: Intent?) {
+            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            val  mDownloadManager = ctxt?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            val mostRecentDownload: Uri = mDownloadManager.getUriForDownloadedFile(id!!)
+            Log.d(TAG,"mostRestct downlaod ${mostRecentDownload}")
+        }
+    }
 
-    private val TAG = "MainActivity"
-    private var secondsRemaining: Long = 0L
-    private val COUNTER_TIME = 3L
-    private val LOG_TAG = "MainActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-       window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
         startActivity()
+        this.registerReceiver(onComplete,
+            IntentFilter(DownloadManager.ACTION_NOTIFICATION_CLICKED)
+        );
 
-//        val notificationsFromFirestore=NotificationsFromFirestore()
-//        notificationsFromFirestore.getNotifications(this)
 
     }
 
     override fun onDestroy() {
         countDownTimer?.cancel()
+        this.unregisterReceiver(onComplete)
         super.onDestroy()
-        window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 
     override fun onPause() {
         super.onPause()
-        window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 
     private fun startActivity(){
