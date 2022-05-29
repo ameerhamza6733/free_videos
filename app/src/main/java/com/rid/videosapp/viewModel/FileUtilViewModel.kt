@@ -35,18 +35,20 @@ class FileUtilViewModel(application: Application) :AndroidViewModel(application)
 
         viewModelScope.launch (Dispatchers.IO){
             var isDownlaoding=true
-            while (isDownlaoding){
-                val q = DownloadManager.Query()
-                q.setFilterById(donwloadId)
-                val downloadManger= (context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager)
+            val q = DownloadManager.Query()
+            q.setFilterById(donwloadId)
+            val downloadManger= (context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager)
 
-                val cursor: Cursor = downloadManger.query(q)
-                cursor.moveToFirst()
+            val cursor: Cursor = downloadManger.query(q)
+               cursor.moveToFirst()
+            while (isDownlaoding){
+                val bytesTotal: Int =
+                    cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+
+
                 val bytesDownloaded: Int = cursor.getInt(
                     cursor!!.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
                 )
-                val bytesTotal: Int =
-                    cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
 
                 if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
                     isDownlaoding = false

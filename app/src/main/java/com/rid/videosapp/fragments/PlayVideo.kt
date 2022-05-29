@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.rid.videosapp.R
 import com.rid.videosapp.databinding.FragmentPlayVideoBinding
@@ -95,24 +96,28 @@ class PlayVideo : Fragment() {
         mediaPlayer?.release()
         mediaPlayer = null
         try{
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                WallpaperManager.getInstance(requireContext()).clearWallpaper()
-            }else{
-                WallpaperManager.getInstance(requireContext()).clear()
-            }
-        }catch (e:Exception){e.printStackTrace()}
-        Handler(Looper.myLooper()!!).postDelayed(Runnable {
-            val setWallaperIntent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
-            setWallaperIntent.putExtra(
-                WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, ComponentName(
-                    context,
-                    VideoWallpaper::class.java
+            try{
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    WallpaperManager.getInstance(requireContext()).clearWallpaper()
+                }else{
+                    WallpaperManager.getInstance(requireContext()).clear()
+                }
+            }catch (e:Exception){e.printStackTrace()}
+            Handler(Looper.myLooper()!!).postDelayed(Runnable {
+                val setWallaperIntent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
+                setWallaperIntent.putExtra(
+                    WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, ComponentName(
+                        context,
+                        VideoWallpaper::class.java
+                    )
                 )
-            )
-            setWallaperIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            context.startActivity(setWallaperIntent)
-        },1000)
-      requireActivity().onBackPressed()
+                setWallaperIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                context.startActivity(setWallaperIntent)
+            },1000)
+            requireActivity().onBackPressed()
+        }catch (activtyNotFound :ActivityNotFoundException){
+            Snackbar.make(rootView.downloadTextView,"Your device not support live wallpaper ",Snackbar.LENGTH_INDEFINITE).show()
+        }
 
     }
 
