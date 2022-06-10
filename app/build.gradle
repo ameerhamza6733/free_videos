@@ -15,8 +15,8 @@ android {
         applicationId "com.rid.videosapp"
         minSdk 21
         targetSdk 31
-        versionCode 7
-        versionName "1.6"
+        versionCode 8
+        versionName "1.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -102,6 +102,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-process:$lifecycle_version"
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+    implementation "androidx.core:core-splashscreen:1.0.0-alpha01"
 
 }
 kapt {

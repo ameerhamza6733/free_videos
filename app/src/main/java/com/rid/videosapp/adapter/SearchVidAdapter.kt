@@ -10,6 +10,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.gms.ads.nativead.NativeAdView
@@ -49,6 +50,7 @@ class SearchVidAdapter(
                 val fm: FragmentManager = (context as AppCompatActivity).supportFragmentManager
                 val ft: FragmentTransaction = fm.beginTransaction()
                 ft.add(R.id.fragment_container, playVideo)
+                ft.setTransition(TRANSIT_FRAGMENT_OPEN)
                 ft.addToBackStack(SearchVideos().TAG)
                 ft.commit()
             }

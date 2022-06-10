@@ -53,6 +53,7 @@ class VideosAdapter(
                 val fm: FragmentManager = (context as AppCompatActivity).supportFragmentManager
                 val ft: FragmentTransaction = fm.beginTransaction()
                 ft.add(R.id.fragment_container, playVideo)
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 ft.addToBackStack(HomeFragment().TAG)
                 ft.commit()
             }

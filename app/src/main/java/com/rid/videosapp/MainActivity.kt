@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.work.*
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.rid.videosapp.fragments.HomeFragment
@@ -32,7 +33,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
 

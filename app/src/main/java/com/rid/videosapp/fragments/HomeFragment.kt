@@ -176,7 +176,7 @@ class HomeFragment : Fragment() {
 
     private fun onClickListeners() {
         bindView.customTbId.searchViewTbId.setOnSearchClickListener {
-            bindView.customTbId.btnSearchId.visibility = View.INVISIBLE
+
         }
         bindView.customTbId.searchViewTbId.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {
